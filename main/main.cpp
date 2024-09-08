@@ -5,6 +5,7 @@
 #include <iostream>
 #include <iomanip>
 #include "../lib_easy_example/easy_example.h"
+#include "../lib_pair/pair.h"
 
 int main() {
   int a, b;
@@ -29,21 +30,15 @@ int main() {
   } catch (std::exception err) {
       std::cerr << err.what() << std::endl;
   }
+  Pair<int, double> p1(1, 3.14);
+  Pair<int, double> p2(2, 2.71);
 
+  std::cout << "p1: " << p1 << std::endl;
+  std::cout << "p2: " << p2 << std::endl;
+
+  Pair<int, double> p3 = p1 + p2;
+  std::cout << "p3: " << p3 << std::endl;
   return 0;
 }
-#else
-int main() {
-    // Пример работы класса TPair
-    TPair<int, std::string> myPair(1, "example");
 
-    std::cout << "Создана пара: " << myPair << std::endl;
-
-    myPair.set_first(2);
-    myPair.set_second("new_example");
-
-    std::cout << "Обновленная пара: " << myPair << std::endl;
-
-    return 0;
-}
 #endif  // EASY_EXAMPLE
