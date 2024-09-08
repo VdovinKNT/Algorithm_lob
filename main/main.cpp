@@ -1,5 +1,4 @@
 // Copyright 2024 Marina Usova
-
 #define EASY_EXAMPLE
 #ifdef EASY_EXAMPLE
 
@@ -33,5 +32,18 @@ int main() {
 
   return 0;
 }
+#else
+int main() {
+    // Пример работы класса TPair
+    TPair<int, std::string> myPair(1, "example");
 
+    std::cout << "Создана пара: " << myPair << std::endl;
+
+    myPair.set_first(2);
+    myPair.set_second("new_example");
+
+    std::cout << "Обновленная пара: " << myPair << std::endl;
+
+    return 0;
+}
 #endif  // EASY_EXAMPLE
