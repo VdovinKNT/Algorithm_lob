@@ -1,16 +1,20 @@
-#ifndef PAIR_H
-#define PAIR_H
+// Copyright 2024 <Artem Vdovin>
+
+#ifndef LIB_PAIR_PAIR_H_
+#define LIB_PAIR_PAIR_H_
 
 #include <iostream>
 #include <string>
 
 template <typename T1, typename T2>
 class Pair {
-public:
+ public:
     Pair() : first_(), second_() {}
-    Pair(const T1& first, const T2& second) : first_(first), second_(second) {}
+    Pair(const T1& first, const T2& second) : first_(first),
+        second_(second) {}
     Pair(const Pair& other) : first_(other.first_), second_(other.second_) {}
-    Pair(Pair&& other) noexcept : first_(std::move(other.first_)), second_(std::move(other.second_)) {}
+    Pair(Pair&& other) noexcept : first_(std::move(other.first_)),
+        second_(std::move(other.second_)) {}
 
     Pair& operator=(const Pair& other) {
         if (this != &other) {
@@ -42,7 +46,8 @@ public:
     }
 
     bool operator<(const Pair& other) const {
-        return first_ < other.first_ || (first_ == other.first_ && second_ < other.second_);
+        return first_ < other.first_ ||
+            (first_ == other.first_ && second_ < other.second_);
     }
 
     bool operator>(const Pair& other) const {
@@ -78,7 +83,8 @@ public:
     }
 
     std::string toString() const {
-        return "(" + std::to_string(first_) + ", " + std::to_string(second_) + ")";
+        return "(" + std::to_string(first_) +
+            ", " + std::to_string(second_) + ")";
     }
 
     void swap(Pair& other) noexcept {
@@ -86,7 +92,7 @@ public:
         std::swap(second_, other.second_);
     }
 
-private:
+ private:
     T1 first_;
     T2 second_;
 };
@@ -96,7 +102,7 @@ std::ostream& operator<<(std::ostream& os, const Pair<T1, T2>& pair) {
     return os << pair.toString();
 }
 
-#endif // PAIR_H
+#endif // LIB_PAIR_PAIR_H_
 
 
 
