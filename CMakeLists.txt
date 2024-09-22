@@ -14,9 +14,11 @@ add_subdirectory(lib_easy_example)    # подключаем дополните�
 
 add_subdirectory(lib_pair)
 
-add_subdirectory(lib_stack)
+add_subdirectory(stack)
 
 add_subdirectory(lib_vector)
+
+add_subdirectory(lib_dmassive)
 
 create_project_lib(Stack)
 

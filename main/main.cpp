@@ -6,8 +6,10 @@
 #include <iomanip>
 #include "../lib_easy_example/easy_example.h"
 #include "../lib_pair/pair.h"
-#include "../stack/stack.h" // Подключите заголовочный файл вашего стека
+#include "../stack/stack.h" 
 #include <stack>
+#include "../lib_dmassive/dmassive.h" 
+#include "../lib_vector/vector.h" 
 
 int main() {
     int a, b;
@@ -68,7 +70,20 @@ int main() {
     }
     std::cout << std::endl;
 
+    TDMassive<int> dMassive;
+    dMassive.insert(0, 1);
+    dMassive.insert(1, 2);
+    dMassive.insert(2, 3);
+    std::cout << "Динамический массив: " << dMassive << std::endl;
+
+    TVector<int> vector(3);
+    vector[0] = 1;
+    vector[1] = 2;
+    vector[2] = 3;
+    std::cout << "Вектор: " << vector[0] << " " << vector[1] << " " << vector[2] << std::endl;
+
     return 0;
 }
 
 #endif  // EASY_EXAMPLE
+
