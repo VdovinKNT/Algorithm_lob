@@ -22,9 +22,6 @@ add_subdirectory(lib_dmassive)
 
 create_project_lib(Stack)
 
-add_depend(Stack DMassive lib_dmassive)
-
-
 add_subdirectory(main)                # подключаем дополнительный CMakeLists.txt из подкаталога с именем main
 
 option(BTEST "build test?" ON)        # указываем подключаем ли google-тесты (ON или YES) или нет (OFF или NO)
