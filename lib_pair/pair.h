@@ -13,9 +13,9 @@ std::ostream& operator<<(std::ostream& out, const TPair<T1, T2>& obj) noexcept;
 
 template <class T1, class T2>
 class TPair {
-public:
-    T1 first; 
-    T2 second; 
+ public:
+    T1 first;
+    T2 second;
 
     TPair() : first(), second() {}
     TPair(const T1& first, const T2& second) : first(first),
@@ -60,7 +60,7 @@ public:
         return temp;
     }
 
-    friend TPair<T1, T2>& operator-(const TPair<T1, T2>& pair1, 
+    friend TPair<T1, T2>& operator-(const TPair<T1, T2>& pair1,
         const TPair<T1, T2>& pair2) {
         TPair<T1, T2> temp(pair1);
         temp -= pair2;
@@ -68,14 +68,14 @@ public:
     }
 
     std::string to_string() const {
-        std::string str = 
+        std::string str =
             "(" + std::to_string(first) + ", " + std::to_string(second) + ")";
         return str;
     }
 };
 
 template <class T1, class T2>
-std::ostream& operator<<(std::ostream& out,const TPair<T1, T2>& pair)noexcept{
+std::ostream& operator<<(std::ostream& out, const TPair<T1, T2>& pair)noexcept {
     out << pair.to_string();
     return out;
 }
