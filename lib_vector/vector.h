@@ -1,3 +1,5 @@
+// Copyright 2024 <Artem Vdovin>
+
 #ifndef VECTOR_H
 #define VECTOR_H
 
@@ -134,9 +136,9 @@ public:
     }
 
 private:
-    T* _data; // Указатель на массив
-    size_t _size; // Размер вектора
-    size_t _capacity; // Вместимость массива
+    T* _data; 
+    size_t _size; 
+    size_t _capacity; 
 };
 
 #endif // VECTOR_H

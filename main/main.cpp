@@ -107,13 +107,17 @@ int main() {
     // Демонстрация работы с динамическим массивом
     std::cout << "\nДемонстрация динамического массива:" << std::endl;
     TDMassive<int> dMassive;
-    std::cout << "Динамический массив (пустой): " << dMassive << std::endl;
+    std::cout << "Динамический массив (пустой): " <<
+        dMassive << std::endl;
     dMassive.insert(0, 1);
-    std::cout << "Динамический массив после insert(0, 1): " << dMassive << std::endl;
+    std::cout << "Динамический массив после insert(0, 1): " <<
+        dMassive << std::endl;
     dMassive.insert(1, 2);
-    std::cout << "Динамический массив после insert(1, 2): " << dMassive << std::endl;
+    std::cout << "Динамический массив после insert(1, 2): " <<
+        dMassive << std::endl;
     dMassive.insert(2, 3);
-    std::cout << "Динамический массив после insert(2, 3): " << dMassive << std::endl;
+    std::cout << "Динамический массив после insert(2, 3): " <<
+        dMassive << std::endl;
 
     // Демонстрация работы с вектором
     std::cout << "\nДемонстрация вектора:" << std::endl;
@@ -121,7 +125,8 @@ int main() {
     vector[0] = 1;
     vector[1] = 2;
     vector[2] = 3;
-    std::cout << "Вектор: " << vector[0] << " " << vector[1] << " " << vector[2] << std::endl;
+    std::cout << "Вектор: " << vector[0] << " " << vector[1] << " " <<
+        vector[2] << std::endl;
 
     return 0;
 }

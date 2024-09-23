@@ -1,3 +1,5 @@
+// Copyright 2024 <Artem Vdovin>
+
 #ifndef DMASSIVE_H
 #define DMASSIVE_H
 
@@ -7,10 +9,8 @@
 template <typename T>
 class TDMassive {
 public:
-    // Конструктор
     TDMassive() : m_data(nullptr), m_size(0), m_capacity(0) {}
 
-    // Деструктор
     ~TDMassive() { delete[] m_data; }
 
     // Вставка элемента на заданную позицию
@@ -37,10 +37,10 @@ public:
     int find(const T& value) const noexcept {
         for (size_t i = 0; i < m_size; ++i) {
             if (m_data[i] == value) {
-                return i; // Возвращаем индекс найденного элемента
+                return i; 
             }
         }
-        return -1; // Возвращаем -1, если элемент не найден
+        return -1; 
     }
 
     // Удаление элемента по индексу
@@ -104,22 +104,20 @@ public:
     }
 
 private:
-    T* m_data; // Указатель на динамический массив
-    size_t m_size; // Количество элементов в массиве
-    size_t m_capacity; // Текущая вместимость массива
+    T* m_data; 
+    size_t m_size; 
+    size_t m_capacity; 
 
-    // Вспомогательная функция для расширения массива
     void resize() {
-        m_capacity = m_capacity == 0 ? 1 : m_capacity * 2; // Увеличиваем вместимость в 2 раза
+        m_capacity = m_capacity == 0 ? 1 : m_capacity * 2; 
         T* new_data = new T[m_capacity];
 
-        // Копируем данные в новый массив
         for (size_t i = 0; i < m_size; ++i) {
             new_data[i] = m_data[i];
         }
 
-        delete[] m_data; // Освобождаем память старого массива
-        m_data = new_data; // Присваиваем указатель на новый массив
+        delete[] m_data; 
+        m_data = new_data; 
     }
 };
 

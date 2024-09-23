@@ -1,3 +1,5 @@
+// Copyright 2024 <Artem Vdovin>
+
 #ifndef STACK_H
 #define STACK_H
 
@@ -7,10 +9,8 @@
 template <typename T>
 class TStack {
 public:
-    // Конструктор
     TStack() : _data(nullptr), _size(0), _top(0) {}
 
-    // Деструктор
     ~TStack() {
         delete[] _data;
     }
@@ -74,9 +74,9 @@ public:
     }
 
 private:
-    T* _data; // Динамический массив для хранения данных стека
-    size_t _size; // Текущий размер стека
-    size_t _top; // Индекс верхушки стека
+    T* _data; 
+    size_t _size;
+    size_t _top; 
 
     // Увеличение размера массива в 2 раза
     void resize() {
@@ -90,8 +90,7 @@ private:
         _size = newSize;
     }
 
-    // Перегрузка оператора вывода для стека
-    friend std::ostream& operator<<(std::ostream& os, const TStack<T>& stack) {
+    friend std::ostream& operator<<(std::ostream& os,const TStack<T>& stack){
         os << "Стек: ";
         for (size_t i = 0; i < stack._top; ++i) {
             os << stack._data[i] << " ";

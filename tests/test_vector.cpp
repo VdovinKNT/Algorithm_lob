@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "vector.h"
 
+// ѕроверка конструктора
 TEST(TVectorTest, Constructor) {
     TVector<int> v1;
     ASSERT_EQ(v1.size(), 0);
@@ -9,6 +10,7 @@ TEST(TVectorTest, Constructor) {
     ASSERT_EQ(v2.size(), 5);
 }
 
+// ѕроверка оператора доступа
 TEST(TVectorTest, AccessOperator) {
     TVector<int> v(5);
     v[0] = 1;
@@ -23,11 +25,13 @@ TEST(TVectorTest, AccessOperator) {
     ASSERT_EQ(v[4], 5);
 }
 
+// ѕроверка выхода за пределы диапазона
 TEST(TVectorTest, AccessOperatorOutOfRange) {
     TVector<int> v(5);
     ASSERT_THROW(v[5], std::out_of_range);
 }
 
+// ѕроверка сложени€
 TEST(TVectorTest, Addition) {
     TVector<int> v1(3);
     v1[0] = 1;
@@ -43,12 +47,14 @@ TEST(TVectorTest, Addition) {
     ASSERT_EQ(v3[2], 9);
 }
 
+// ѕроверка сложени€ векторов с разными размерами
 TEST(TVectorTest, AdditionDifferentSizes) {
     TVector<int> v1(3);
     TVector<int> v2(4);
     ASSERT_THROW(v1 + v2, std::logic_error);
 }
 
+// ѕроверка вычитани€
 TEST(TVectorTest, Subtraction) {
     TVector<int> v1(3);
     v1[0] = 1;
@@ -64,12 +70,14 @@ TEST(TVectorTest, Subtraction) {
     ASSERT_EQ(v3[2], -3);
 }
 
+// ѕроверка вычитани€ векторов с разными размерами
 TEST(TVectorTest, SubtractionDifferentSizes) {
     TVector<int> v1(3);
     TVector<int> v2(4);
     ASSERT_THROW(v1 - v2, std::logic_error);
 }
 
+// ѕроверка умножени€ на скал€р
 TEST(TVectorTest, MultiplicationScalar) {
     TVector<int> v1(3);
     v1[0] = 1;
@@ -81,6 +89,7 @@ TEST(TVectorTest, MultiplicationScalar) {
     ASSERT_EQ(v2[2], 6);
 }
 
+// ѕроверка сложени€ с присваиванием
 TEST(TVectorTest, AdditionAssign) {
     TVector<int> v1(3);
     v1[0] = 1;
@@ -96,12 +105,14 @@ TEST(TVectorTest, AdditionAssign) {
     ASSERT_EQ(v1[2], 9);
 }
 
+// ѕроверка сложени€ с присваиванием дл€ разных размеров
 TEST(TVectorTest, AdditionAssignDifferentSizes) {
     TVector<int> v1(3);
     TVector<int> v2(4);
     ASSERT_THROW(v1 += v2, std::logic_error);
 }
 
+// ѕроверка вычитани€ с присваиванием
 TEST(TVectorTest, SubtractionAssign) {
     TVector<int> v1(3);
     v1[0] = 1;
@@ -117,12 +128,14 @@ TEST(TVectorTest, SubtractionAssign) {
     ASSERT_EQ(v1[2], -3);
 }
 
+// ѕроверка вычитани€ с присваиванием дл€ разных размеров
 TEST(TVectorTest, SubtractionAssignDifferentSizes) {
     TVector<int> v1(3);
     TVector<int> v2(4);
     ASSERT_THROW(v1 -= v2, std::logic_error);
 }
 
+// ѕроверка умножени€ на скал€р с присваиванием
 TEST(TVectorTest, MultiplicationAssignScalar) {
     TVector<int> v1(3);
     v1[0] = 1;
@@ -134,6 +147,7 @@ TEST(TVectorTest, MultiplicationAssignScalar) {
     ASSERT_EQ(v1[2], 6);
 }
 
+// ѕроверка сравнени€ на равенство
 TEST(TVectorTest, Equality) {
     TVector<int> v1(3);
     v1[0] = 1;
@@ -146,6 +160,7 @@ TEST(TVectorTest, Equality) {
     ASSERT_TRUE(v1 == v2);
 }
 
+// ѕроверка сравнени€ на неравенство
 TEST(TVectorTest, Inequality) {
     TVector<int> v1(3);
     v1[0] = 1;
@@ -158,11 +173,13 @@ TEST(TVectorTest, Inequality) {
     ASSERT_FALSE(v1 == v2);
 }
 
+// ѕроверка получени€ размера
 TEST(TVectorTest, Size) {
     TVector<int> v1(3);
     ASSERT_EQ(v1.size(), 3);
 }
 
+// ѕроверка скал€рного произведени€
 TEST(TVectorTest, DotProduct) {
     TVector<int> v1(3);
     v1[0] = 1;
@@ -175,9 +192,9 @@ TEST(TVectorTest, DotProduct) {
     ASSERT_EQ(v1.dotProduct(v2), 32);
 }
 
+// ѕроверка скал€рного произведени€ дл€ разных размеров
 TEST(TVectorTest, DotProductDifferentSizes) {
     TVector<int> v1(3);
     TVector<int> v2(4);
     ASSERT_THROW(v1.dotProduct(v2), std::logic_error);
 }
-
