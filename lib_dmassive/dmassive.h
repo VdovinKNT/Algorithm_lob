@@ -74,7 +74,7 @@ public:
     }
 
     // Вывод массива на экран
-    friend std::ostream& operator<<(std::ostream& os, const TDMassive& massive) {
+    friend std::ostream& operator<<(std::ostream& os,const TDMassive& massive){
         os << "Массив: ";
         for (size_t i = 0; i < massive.m_size; ++i) {
             os << massive.m_data[i] << " ";

@@ -21,7 +21,6 @@ public:
         }
     }
 
-    // Деструктор
     ~TVector() {
         delete[] _data;
     }

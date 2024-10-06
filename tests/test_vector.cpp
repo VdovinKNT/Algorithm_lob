@@ -1,3 +1,5 @@
+// Copyright 2024 <Artem Vdovin>
+
 #include "gtest/gtest.h"
 #include "vector.h"
 

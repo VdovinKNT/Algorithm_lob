@@ -128,6 +128,7 @@ int main() {
     std::cout << "Вектор: " << vector[0] << " " << vector[1] << " " <<
         vector[2] << std::endl;
 
+
     return 0;
 }
 
