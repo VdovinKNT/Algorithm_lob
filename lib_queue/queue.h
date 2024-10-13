@@ -7,7 +7,6 @@
 #include <stdexcept>
 #include <string>
 
-// Шаблон класса TQueue
 template <class T>
 class TQueue {
 public:

@@ -12,6 +12,7 @@
 #include <stack>
 #include "../lib_dmassive/dmassive.h" 
 #include "../lib_vector/vector.h" 
+#include "../lib_queue/queue.h"
 
 int main() {
     std::locale::global(std::locale(""));
@@ -128,8 +129,28 @@ int main() {
     std::cout << "Вектор: " << vector[0] << " " << vector[1] << " " <<
         vector[2] << std::endl;
 
+    // Демонстрация работы с очередью
+    std::cout << "\nДемонстрация очереди:" << std::endl;
+    TQueue<int> queue;
+    queue.push(1);
+    std::cout << "Очередь после push(1): " << queue << std::endl;
+    queue.push(2);
+    std::cout << "Очередь после push(2): " << queue << std::endl;
+    queue.push(3);
+    std::cout << "Очередь после push(3): " << queue << std::endl;
+    std::cout << "Очередь front: " << queue.front() << std::endl;
+
+    std::cout << "Очередь pop: ";
+    while (!queue.empty()) {
+        std::cout << queue.front() << " ";
+        queue.pop();
+        std::cout << "Очередь после pop: " << queue << std::endl;
+    }
+    std::cout << std::endl;
 
     return 0;
 }
 
 #endif  // EASY_EXAMPLE
+
+
