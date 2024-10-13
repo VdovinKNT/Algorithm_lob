@@ -16,7 +16,7 @@ add_subdirectory(lib_dmassive)        # подключаем дополните�
 add_subdirectory(stack)               # подключаем дополнительный CMakeLists.txt из подкаталога с именем lib_Stack
 add_subdirectory(lib_vector)          # подключаем дополнительный CMakeLists.txt из подкаталога с именем lib_Vector
 add_subdirectory(lib_queue)           # подключаем дополнительный CMakeLists.txt из подкаталога с именем lib_Queue
-add_subdirectory(lib_list)           # подключаем дополнительный CMakeLists.txt из подкаталога с именем lib_List
+add_subdirectory(lib_list)            # подключаем дополнительный CMakeLists.txt из подкаталога с именем lib_List
 
 
 add_subdirectory(main)                # подключаем дополнительный CMakeLists.txt из подкаталога с именем main
