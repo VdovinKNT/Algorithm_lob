@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include <type_traits>
 
 template <class T1, class T2> class TPair;
 
@@ -20,10 +21,8 @@ public:
 
     // Конструкторы
     TPair() : first(), second() {}
-    TPair(const T1& first, const T2& second) : first(first),
-        second(second) {}
-    TPair(const TPair<T1, T2>& other) : first(other.first),
-        second(other.second) {}
+    TPair(const T1& first, const T2& second) : first(first), second(second) {}
+    TPair(const TPair<T1, T2>& other) : first(other.first), second(other.second) {}
 
     // Операторы сравнения
     bool operator==(const TPair& other) const {
@@ -42,15 +41,19 @@ public:
 
     // Операторы присваивания
     TPair<T1, T2>& operator+=(const TPair<T1, T2>& other) {
+        static_assert(std::is_arithmetic<T1>::value && std::is_arithmetic<T2>::value,
+            "TPair types must support arithmetic operations.");
         first += other.first;
         second += other.second;
-        return *this;
+        return *this;  // Return *this for chaining
     }
 
     TPair<T1, T2>& operator-=(const TPair<T1, T2>& other) {
+        static_assert(std::is_arithmetic<T1>::value && std::is_arithmetic<T2>::value,
+            "TPair types must support arithmetic operations.");
         first -= other.first;
         second -= other.second;
-        return *this;
+        return *this;  // Return *this for chaining
     }
 
     // Операторы сложения и вычитания
@@ -66,8 +69,8 @@ public:
         return temp;
     }
 
-    friend TPair<T1, T2>& operator-(const TPair<T1, T2>& pair1,
-        const TPair<T1, T2>& pair2) {
+    // Перегрузка оператора вычитания
+    friend TPair<T1, T2> operator-(const TPair<T1, T2>& pair1, const TPair<T1, T2>& pair2) {
         TPair<T1, T2> temp(pair1);
         temp -= pair2;
         return temp;
@@ -75,18 +78,15 @@ public:
 
     // Преобразование в строку
     std::string to_string() const {
-        std::string str =
-            "(" + std::to_string(first) + ", " + std::to_string(second) + ")";
-        return str;
+        return "(" + std::to_string(first) + ", " + std::to_string(second) + ")";
     }
 };
 
 // Шаблон перегрузки оператора вывода для TPair
 template <class T1, class T2>
-std::ostream& operator<<(std::ostream& out, const TPair<T1, T2>& pair)noexcept {
+std::ostream& operator<<(std::ostream& out, const TPair<T1, T2>& pair) noexcept {
     out << pair.to_string();
     return out;
 }
 
 #endif  // LIB_PAIR_PAIR_H_
-

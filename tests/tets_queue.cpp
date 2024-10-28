@@ -1,7 +1,7 @@
 // Copyright 2024 Artem Vdovin
 
-#include "gtest/gtest.h"
-#include "queue.h"
+#include "gtest.h"
+#include "../lib_queue/queue.h"
 
 // Тест для проверки пустой очереди
 TEST(TQueueTest, Empty) {

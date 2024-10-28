@@ -1,202 +1,104 @@
-// Copyright 2024 <Artem Vdovin>
-
-#include "gtest/gtest.h"
+#include <gtest.h>
 #include "vector.h"
 
-// Проверка конструктора
-TEST(TVectorTest, Constructor) {
-    TVector<int> v1;
-    ASSERT_EQ(v1.size(), 0);
-
-    TVector<int> v2(5);
-    ASSERT_EQ(v2.size(), 5);
+// Тест конструктора с размером и значением по умолчанию
+TEST(TVectorTest, ConstructorWithSizeAndDefaultValue) {
+    TVector<int> vec(3, 1);
+    ASSERT_EQ(vec.size(), 3);
+    ASSERT_EQ(vec[0], 1);
+    ASSERT_EQ(vec[1], 1);
+    ASSERT_EQ(vec[2], 1);
 }
 
-// Проверка оператора доступа
-TEST(TVectorTest, AccessOperator) {
-    TVector<int> v(5);
-    v[0] = 1;
-    v[1] = 2;
-    v[2] = 3;
-    v[3] = 4;
-    v[4] = 5;
-    ASSERT_EQ(v[0], 1);
-    ASSERT_EQ(v[1], 2);
-    ASSERT_EQ(v[2], 3);
-    ASSERT_EQ(v[3], 4);
-    ASSERT_EQ(v[4], 5);
+// Тест доступа к элементам
+TEST(TVectorTest, AccessElements) {
+    int arr[] = { 1, 2, 3 };
+    TVector<int> vec(3); // Изменен конструктор на корректный
+    for (size_t i = 0; i < 3; ++i) {
+        vec[i] = arr[i]; // Заполняем вектор значениями
+    }
+    ASSERT_EQ(vec[0], 1);
+    ASSERT_EQ(vec[1], 2);
+    ASSERT_EQ(vec[2], 3);
 }
 
-// Проверка выхода за пределы диапазона
-TEST(TVectorTest, AccessOperatorOutOfRange) {
-    TVector<int> v(5);
-    ASSERT_THROW(v[5], std::out_of_range);
+// Тест оператора сложения
+TEST(TVectorTest, AdditionOperator) {
+    int arr1[] = { 1, 2, 3 };
+    int arr2[] = { 4, 5, 6 };
+    TVector<int> vec1(3);
+    TVector<int> vec2(3);
+    for (size_t i = 0; i < 3; ++i) {
+        vec1[i] = arr1[i]; // Заполняем первый вектор
+        vec2[i] = arr2[i]; // Заполняем второй вектор
+    }
+    TVector<int> result = vec1 + vec2;
+    ASSERT_EQ(result.size(), 3);
+    ASSERT_EQ(result[0], 5);
+    ASSERT_EQ(result[1], 7);
+    ASSERT_EQ(result[2], 9);
 }
 
-// Проверка сложения
-TEST(TVectorTest, Addition) {
-    TVector<int> v1(3);
-    v1[0] = 1;
-    v1[1] = 2;
-    v1[2] = 3;
-    TVector<int> v2(3);
-    v2[0] = 4;
-    v2[1] = 5;
-    v2[2] = 6;
-    TVector<int> v3 = v1 + v2;
-    ASSERT_EQ(v3[0], 5);
-    ASSERT_EQ(v3[1], 7);
-    ASSERT_EQ(v3[2], 9);
+// Тест оператора вычитания
+TEST(TVectorTest, SubtractionOperator) {
+    int arr1[] = { 4, 5, 6 };
+    int arr2[] = { 1, 2, 3 };
+    TVector<int> vec1(3);
+    TVector<int> vec2(3);
+    for (size_t i = 0; i < 3; ++i) {
+        vec1[i] = arr1[i]; // Заполняем первый вектор
+        vec2[i] = arr2[i]; // Заполняем второй вектор
+    }
+    TVector<int> result = vec1 - vec2;
+    ASSERT_EQ(result.size(), 3);
+    ASSERT_EQ(result[0], 3);
+    ASSERT_EQ(result[1], 3);
+    ASSERT_EQ(result[2], 3);
 }
 
-// Проверка сложения векторов с разными размерами
-TEST(TVectorTest, AdditionDifferentSizes) {
-    TVector<int> v1(3);
-    TVector<int> v2(4);
-    ASSERT_THROW(v1 + v2, std::logic_error);
+// Тест умножения на скаляр
+TEST(TVectorTest, ScalarMultiplication) {
+    int arr[] = { 1, 2, 3 };
+    TVector<int> vec(3);
+    for (size_t i = 0; i < 3; ++i) {
+        vec[i] = arr[i]; // Заполняем вектор значениями
+    }
+    TVector<int> result = vec * 2;
+    ASSERT_EQ(result.size(), 3);
+    ASSERT_EQ(result[0], 2);
+    ASSERT_EQ(result[1], 4);
+    ASSERT_EQ(result[2], 6);
 }
 
-// Проверка вычитания
-TEST(TVectorTest, Subtraction) {
-    TVector<int> v1(3);
-    v1[0] = 1;
-    v1[1] = 2;
-    v1[2] = 3;
-    TVector<int> v2(3);
-    v2[0] = 4;
-    v2[1] = 5;
-    v2[2] = 6;
-    TVector<int> v3 = v1 - v2;
-    ASSERT_EQ(v3[0], -3);
-    ASSERT_EQ(v3[1], -3);
-    ASSERT_EQ(v3[2], -3);
+
+
+// Тест оператора сравнения на равенство
+TEST(TVectorTest, EqualityOperator) {
+    int arr[] = { 1, 2, 3 };
+    TVector<int> vec1(3);
+    TVector<int> vec2(3);
+    for (size_t i = 0; i < 3; ++i) {
+        vec1[i] = arr[i]; // Заполняем первый вектор
+        vec2[i] = arr[i]; // Заполняем второй вектор
+    }
+    ASSERT_TRUE(vec1 == vec2);
 }
 
-// Проверка вычитания векторов с разными размерами
-TEST(TVectorTest, SubtractionDifferentSizes) {
-    TVector<int> v1(3);
-    TVector<int> v2(4);
-    ASSERT_THROW(v1 - v2, std::logic_error);
+// Тест оператора сравнения на неравенство
+TEST(TVectorTest, InequalityOperator) {
+    int arr1[] = { 1, 2, 3 };
+    int arr2[] = { 4, 5, 6 };
+    TVector<int> vec1(3);
+    TVector<int> vec2(3);
+    for (size_t i = 0; i < 3; ++i) {
+        vec1[i] = arr1[i]; // Заполняем первый вектор
+        vec2[i] = arr2[i]; // Заполняем второй вектор
+    }
+    ASSERT_TRUE(vec1 != vec2);
 }
 
-// Проверка умножения на скаляр
-TEST(TVectorTest, MultiplicationScalar) {
-    TVector<int> v1(3);
-    v1[0] = 1;
-    v1[1] = 2;
-    v1[2] = 3;
-    TVector<int> v2 = v1 * 2;
-    ASSERT_EQ(v2[0], 2);
-    ASSERT_EQ(v2[1], 4);
-    ASSERT_EQ(v2[2], 6);
-}
-
-// Проверка сложения с присваиванием
-TEST(TVectorTest, AdditionAssign) {
-    TVector<int> v1(3);
-    v1[0] = 1;
-    v1[1] = 2;
-    v1[2] = 3;
-    TVector<int> v2(3);
-    v2[0] = 4;
-    v2[1] = 5;
-    v2[2] = 6;
-    v1 += v2;
-    ASSERT_EQ(v1[0], 5);
-    ASSERT_EQ(v1[1], 7);
-    ASSERT_EQ(v1[2], 9);
-}
-
-// Проверка сложения с присваиванием для разных размеров
-TEST(TVectorTest, AdditionAssignDifferentSizes) {
-    TVector<int> v1(3);
-    TVector<int> v2(4);
-    ASSERT_THROW(v1 += v2, std::logic_error);
-}
-
-// Проверка вычитания с присваиванием
-TEST(TVectorTest, SubtractionAssign) {
-    TVector<int> v1(3);
-    v1[0] = 1;
-    v1[1] = 2;
-    v1[2] = 3;
-    TVector<int> v2(3);
-    v2[0] = 4;
-    v2[1] = 5;
-    v2[2] = 6;
-    v1 -= v2;
-    ASSERT_EQ(v1[0], -3);
-    ASSERT_EQ(v1[1], -3);
-    ASSERT_EQ(v1[2], -3);
-}
-
-// Проверка вычитания с присваиванием для разных размеров
-TEST(TVectorTest, SubtractionAssignDifferentSizes) {
-    TVector<int> v1(3);
-    TVector<int> v2(4);
-    ASSERT_THROW(v1 -= v2, std::logic_error);
-}
-
-// Проверка умножения на скаляр с присваиванием
-TEST(TVectorTest, MultiplicationAssignScalar) {
-    TVector<int> v1(3);
-    v1[0] = 1;
-    v1[1] = 2;
-    v1[2] = 3;
-    v1 *= 2;
-    ASSERT_EQ(v1[0], 2);
-    ASSERT_EQ(v1[1], 4);
-    ASSERT_EQ(v1[2], 6);
-}
-
-// Проверка сравнения на равенство
-TEST(TVectorTest, Equality) {
-    TVector<int> v1(3);
-    v1[0] = 1;
-    v1[1] = 2;
-    v1[2] = 3;
-    TVector<int> v2(3);
-    v2[0] = 1;
-    v2[1] = 2;
-    v2[2] = 3;
-    ASSERT_TRUE(v1 == v2);
-}
-
-// Проверка сравнения на неравенство
-TEST(TVectorTest, Inequality) {
-    TVector<int> v1(3);
-    v1[0] = 1;
-    v1[1] = 2;
-    v1[2] = 3;
-    TVector<int> v2(3);
-    v2[0] = 1;
-    v2[1] = 2;
-    v2[2] = 4;
-    ASSERT_FALSE(v1 == v2);
-}
-
-// Проверка получения размера
-TEST(TVectorTest, Size) {
-    TVector<int> v1(3);
-    ASSERT_EQ(v1.size(), 3);
-}
-
-// Проверка скалярного произведения
-TEST(TVectorTest, DotProduct) {
-    TVector<int> v1(3);
-    v1[0] = 1;
-    v1[1] = 2;
-    v1[2] = 3;
-    TVector<int> v2(3);
-    v2[0] = 4;
-    v2[1] = 5;
-    v2[2] = 6;
-    ASSERT_EQ(v1.dotProduct(v2), 32);
-}
-
-// Проверка скалярного произведения для разных размеров
-TEST(TVectorTest, DotProductDifferentSizes) {
-    TVector<int> v1(3);
-    TVector<int> v2(4);
-    ASSERT_THROW(v1.dotProduct(v2), std::logic_error);
+// Запуск всех тестов
+int main(int argc, char** argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

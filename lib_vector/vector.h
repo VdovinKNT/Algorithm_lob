@@ -1,143 +1,170 @@
-// Copyright 2024 <Artem Vdovin>
+#ifndef TVECTOR_H
+#define TVECTOR_H
 
-#ifndef VECTOR_H
-#define VECTOR_H
-
+#include "../lib_dmassive/dmassive.h"
+#include <cstddef>
 #include <stdexcept>
+#include <iostream>
 
-template <typename T>
+template<typename T>
 class TVector {
+private:
+    DMassive<T> _data;       // Вектор данных, теперь с шаблонным параметром
+    size_t _start_index;     // Индекс, с которого начинается вектор
+
 public:
-    // Конструкторы
-    TVector() : _data(nullptr), _size(0), _capacity(0) {}
+    // Конструктор
+    TVector(size_t size, size_t start_index = 0)
+        : _data(size), _start_index(start_index) {}
 
-    TVector(size_t size) : _data(new T[size]), _size(size), _capacity(size) {}
+    TVector(const TVector& other)
+        : _data(other._data), _start_index(other._start_index) {}
 
-    TVector(const TVector<T>& other) : _data(new T[other._size]),
-        _size(other._size),
-        _capacity(other._size) {
-        for (size_t i = 0; i < _size; ++i) {
-            _data[i] = other._data[i];
-        }
+    TVector(TVector&& other) noexcept
+        : _data(std::move(other._data)), _start_index(other._start_index) {
+        other._start_index = 0; // обнуление переменной
     }
 
-    ~TVector() {
-        delete[] _data;
-    }
+    // Деструктор
+    ~TVector() {}
 
     // Операторы доступа
     T& operator[](size_t index) {
-        if (index >= _size) {
+        if (index < _start_index || index >= _start_index + _data.size()) {
             throw std::out_of_range("Index out of range");
         }
-        return _data[index];
+        return _data[index - _start_index]; // корректировка индекса
     }
 
     const T& operator[](size_t index) const {
-        if (index >= _size) {
+        if (index < _start_index || index >= _start_index + _data.size()) {
             throw std::out_of_range("Index out of range");
         }
-        return _data[index];
+        return _data[index - _start_index];
     }
 
-    // Операторы сложения и вычитания
-    TVector<T> operator+(const TVector<T>& other) const {
-        if (_size != other._size) {
-            throw std::logic_error("Vectors have different sizes");
+    // Операторы сложения
+    TVector operator+(const TVector& other) const {
+        if (this->size() != other.size()) {
+            throw std::invalid_argument("Vectors must be the same size for addition");
         }
-        TVector<T> result(_size);
-        for (size_t i = 0; i < _size; ++i) {
-            result._data[i] = _data[i] + other._data[i];
+
+        TVector result(this->size());
+        for (size_t i = 0; i < this->size(); ++i) {
+            result[i + _start_index] = (*this)[i + _start_index] + other[i + _start_index];
         }
         return result;
     }
 
-    TVector<T> operator-(const TVector<T>& other) const {
-        if (_size != other._size) {
-            throw std::logic_error("Vectors have different sizes");
+    // Оператор вычитания
+    TVector operator-(const TVector& other) const {
+        if (this->size() != other.size()) {
+            throw std::invalid_argument("Vectors must be the same size for subtraction");
         }
-        TVector<T> result(_size);
-        for (size_t i = 0; i < _size; ++i) {
-            result._data[i] = _data[i] - other._data[i];
+
+        TVector result(this->size());
+        for (size_t i = 0; i < this->size(); ++i) {
+            result[i + _start_index] = (*this)[i + _start_index] - other[i + _start_index];
         }
         return result;
     }
 
-    // Оператор умножения на число
-    TVector<T> operator*(T scalar) const {
-        TVector<T> result(_size);
-        for (size_t i = 0; i < _size; ++i) {
-            result._data[i] = _data[i] * scalar;
+    // Оператор умножения на скаляр
+    TVector operator*(T scalar) const {
+        TVector result(this->size());
+        for (size_t i = 0; i < this->size(); ++i) {
+            result[i + _start_index] = (*this)[i + _start_index] * scalar;
         }
         return result;
     }
 
     // Операторы присваивания
-    TVector<T>& operator+=(const TVector<T>& other) {
-        if (_size != other._size) {
-            throw std::logic_error("Vectors have different sizes");
+    TVector& operator+=(const TVector& other) {
+        if (this->size() != other.size()) {
+            throw std::invalid_argument("Vectors must be the same size for addition");
         }
-        for (size_t i = 0; i < _size; ++i) {
-            _data[i] += other._data[i];
+
+        for (size_t i = 0; i < this->size(); ++i) {
+            (*this)[i + _start_index] += other[i + _start_index];
         }
         return *this;
     }
 
-    TVector<T>& operator-=(const TVector<T>& other) {
-        if (_size != other._size) {
-            throw std::logic_error("Vectors have different sizes");
+    TVector& operator-=(const TVector& other) {
+        if (this->size() != other.size()) {
+            throw std::invalid_argument("Vectors must be the same size for subtraction");
         }
-        for (size_t i = 0; i < _size; ++i) {
-            _data[i] -= other._data[i];
+
+        for (size_t i = 0; i < this->size(); ++i) {
+            (*this)[i + _start_index] -= other[i + _start_index];
         }
         return *this;
     }
 
-    TVector<T>& operator*=(T scalar) {
-        for (size_t i = 0; i < _size; ++i) {
-            _data[i] *= scalar;
+    TVector& operator*=(T scalar) {
+        for (size_t i = 0; i < this->size(); ++i) {
+            (*this)[i + _start_index] *= scalar;
         }
         return *this;
     }
 
     // Операторы сравнения
-    bool operator==(const TVector<T>& other) const {
-        if (_size != other._size) {
+    bool operator==(const TVector& other) const {
+        if (this->size() != other.size()) {
             return false;
         }
-        for (size_t i = 0; i < _size; ++i) {
-            if (_data[i] != other._data[i]) {
+        for (size_t i = 0; i < this->size(); ++i) {
+            if ((*this)[i + _start_index] != other[i + _start_index]) {
                 return false;
             }
         }
         return true;
     }
 
-    bool operator!=(const TVector<T>& other) const {
+    bool operator!=(const TVector& other) const {
         return !(*this == other);
     }
 
-    // Получение размера вектора
+    bool operator<(const TVector& other) const {
+        size_t minSize = std::min(this->size(), other.size());
+        for (size_t i = 0; i < minSize; ++i) {
+            if ((*this)[i + _start_index] < other[i + _start_index]) {
+                return true;
+            }
+            else if ((*this)[i + _start_index] > other[i + _start_index]) {
+                return false;
+            }
+        }
+        return this->size() < other.size(); // Меньший по размеру
+    }
+
+    bool operator<=(const TVector& other) const {
+        return (*this < other) || (*this == other);
+    }
+
+    bool operator>(const TVector& other) const {
+        return !(*this <= other);
+    }
+
+    bool operator>=(const TVector& other) const {
+        return !(*this < other);
+    }
+
+    // Другие методы
     size_t size() const {
-        return _size;
+        return _data.size(); // Здесь предполагается, что метод size() корректен в DMassive
     }
 
-    // Получение значения скалярного произведения
-    T dotProduct(const TVector<T>& other) const {
-        if (_size != other._size) {
-            throw std::logic_error("Vectors have different sizes");
-        }
-        T result = 0;
-        for (size_t i = 0; i < _size; ++i) {
-            result += _data[i] * other._data[i];
-        }
-        return result;
+    size_t start_index() const {
+        return _start_index;
     }
 
-private:
-    T* _data; 
-    size_t _size; 
-    size_t _capacity; 
+    void print() const {
+        for (size_t i = 0; i < size(); ++i) {
+            std::cout << (*this)[i + _start_index] << " ";
+        }
+        std::cout << std::endl;
+    }
 };
 
-#endif // VECTOR_H
+#endif // TVECTOR_H
