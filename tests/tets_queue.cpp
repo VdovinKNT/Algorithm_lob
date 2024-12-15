@@ -1,101 +1,98 @@
 // Copyright 2024 Artem Vdovin
 
-#include "gtest.h"
-#include "../lib_queue/queue.h"
+#include <gtest.h>
+#include "../lib_Queue/Queue.h"
 
-// Тест для проверки пустой очереди
-TEST(TQueueTest, Empty) {
-	TQueue<int> queue;
-	ASSERT_TRUE(queue.empty());
+TEST(TestQueue, can_enqueue_and_front) {
+    // Arrange
+    Queue<int> queue(5);
+
+    // Act
+    queue.enqueue(1);5;
+    int actual_result = queue.front();
+
+    // Assert
+    EXPECT_EQ(actual_result, 1);
 }
 
-// Тест для проверки размера пустой очереди
-TEST(TQueueTest, SizeEmpty) {
-	TQueue<int> queue;
-	ASSERT_EQ(queue.size(), 0);
+TEST(TestQueue, can_dequeue) {
+    // Arrange
+    Queue<int> queue(5);
+    queue.enqueue(1);
+    queue.enqueue(2);
+
+    // Act
+    int actual_result = queue.dequeue();
+
+    // Assert
+    EXPECT_EQ(actual_result, 1);
 }
 
-// Тест для проверки добавления элемента в очередь
-TEST(TQueueTest, Push) {
-	TQueue<int> queue;
-	queue.push(1);
-	ASSERT_EQ(queue.size(), 1);
-	ASSERT_EQ(queue.front(), 1);
+TEST(TestQueue, throw_when_enqueue_overflow) {
+    // Arrange
+    Queue<int> queue(5);
+    for (int i = 0; i < 5; ++i) {
+        queue.enqueue(i);
+    }
+
+    // Act & Assert
+    ASSERT_THROW(queue.enqueue(6), std::overflow_error);
 }
 
-// Тест для проверки извлечения элемента из очереди
-TEST(TQueueTest, Pop) {
-	TQueue<int> queue;
-	queue.push(1);
-	queue.push(2);
-	ASSERT_EQ(queue.pop(), 1);
-	ASSERT_EQ(queue.size(), 1);
-	ASSERT_EQ(queue.front(), 2);
+TEST(TestQueue, throw_when_dequeue_on_empty_queue) {
+    // Arrange
+    Queue<int> queue(5);
+
+    // Act & Assert
+    ASSERT_THROW(queue.dequeue(), std::underflow_error);
 }
 
-// Тест для проверки извлечения элемента из пустой очереди
-TEST(TQueueTest, PopEmpty) {
-	TQueue<int> queue;
-	ASSERT_THROW(queue.pop(), std::out_of_range);
+TEST(TestQueue, throw_when_front_on_empty_queue) {
+    // Arrange
+    Queue<int> queue(5);
+
+    // Act & Assert
+    ASSERT_THROW(queue.front(), std::underflow_error);
 }
 
-// Тест для проверки получения элемента из начала очереди
-TEST(TQueueTest, Front) {
-	TQueue<int> queue;
-	queue.push(1);
-	queue.push(2);
-	ASSERT_EQ(queue.front(), 1);
-	ASSERT_EQ(queue.size(), 2);
+TEST(TestQueue, can_check_if_queue_is_empty) {
+    // Arrange
+    Queue<int> queue(5);
+
+    // Act & Assert
+    EXPECT_TRUE(queue.isEmpty());
+    queue.enqueue(1);
+    EXPECT_FALSE(queue.isEmpty());
 }
 
-// Тест для проверки получения элемента из пустой очереди
-TEST(TQueueTest, FrontEmpty) {
-	TQueue<int> queue;
-	ASSERT_THROW(queue.front(), std::out_of_range);
+TEST(TestQueue, can_get_size_of_queue) {
+    // Arrange
+    Queue<int> queue(5);
+
+    // Act
+    size_t actual_size = queue.size();
+
+    // Assert
+    EXPECT_EQ(actual_size, 0);
+    queue.enqueue(1);
+    EXPECT_EQ(queue.size(), 1);
+    queue.dequeue();
+    EXPECT_EQ(queue.size(), 0);
 }
 
-// Тест для проверки очистки очереди
-TEST(TQueueTest, Clear) {
-	TQueue<int> queue;
-	queue.push(1);
-	queue.push(2);
-	queue.clear();
-	ASSERT_TRUE(queue.empty());
-	ASSERT_EQ(queue.size(), 0);
-}
+TEST(TestQueue, can_wrap_around_when_enqueue_dequeue) {
+    // Arrange
+    Queue<int> queue(3);
+    queue.enqueue(1);
+    queue.enqueue(2);
+    queue.enqueue(3);
+    queue.dequeue();
 
-// Тест для проверки оператора вывода
-TEST(TQueueTest, OperatorOutput) {
-	TQueue<int> queue;
-	queue.push(1);
-	queue.push(2);
-	std::stringstream ss;
-	ss << queue;
-	ASSERT_EQ(ss.str(), "1 2 ");
-}
+    // Act
+    queue.enqueue(4);
+    int actual_result = queue.dequeue();
 
-// Тест для проверки конструктора копирования
-TEST(TQueueTest, CopyConstructor) {
-	TQueue<int> queue1;
-	queue1.push(1);
-	queue1.push(2);
-	TQueue<int> queue2(queue1);
-	ASSERT_EQ(queue2.size(), 2);
-	ASSERT_EQ(queue2.front(), 1);
-	ASSERT_EQ(queue2.pop(), 1);
-	ASSERT_EQ(queue2.pop(), 2);
-}
-
-// Тест для проверки оператора присваивания
-TEST(TQueueTest, OperatorAssign) {
-	TQueue<int> queue1;
-	queue1.push(1);
-	queue1.push(2);
-	TQueue<int> queue2;
-	queue2 = queue1;
-	ASSERT_EQ(queue2.size(), 2);
-	ASSERT_EQ(queue2.front(), 1);
-	ASSERT_EQ(queue2.pop(), 1);
-	ASSERT_EQ(queue2.pop(), 2);
+    // Assert
+    EXPECT_EQ(actual_result, 2);
 }
 

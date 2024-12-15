@@ -5,118 +5,67 @@
 
 #include <iostream>
 #include <stdexcept>
-#include <string>
 
-template <class T>
-class TQueue {
-public:
-    TQueue() : head_(nullptr), tail_(nullptr), size_(0) {}  
-
-    TQueue(const TQueue<T>& other) : head_(nullptr), tail_(nullptr), size_(0) {
-        Node* current = other.head_;
-        while (current != nullptr) {
-            push(current->data); 
-            current = current->next;
-        }
-    }
-
-    ~TQueue() {
-        clear();  
-    }
-
-    // Оператор присваивания
-    TQueue<T>& operator=(const TQueue<T>& other) {
-        if (this != &other) {  
-            clear();  
-            Node* current = other.head_;
-            while (current != nullptr) {
-                push(current->data); 
-                current = current->next;
-            }
-        }
-        return *this;  
-    }
-
-    // Добавление элемента в конец очереди
-    void push(const T& data) {
-        Node* new_node = new Node(data); 
-        if (head_ == nullptr) {  
-            head_ = tail_ = new_node;  
-        }
-        else {
-            tail_->next = new_node; 
-            tail_ = new_node;  
-        }
-        ++size_;  
-    }
-
-    // Извлечение элемента из начала очереди
-    T pop() {
-        if (head_ == nullptr) {  
-            throw std::out_of_range("Очередь пуста.");  
-        }
-        T data = head_->data;  
-        Node* temp = head_;  
-        head_ = head_->next;  
-        delete temp;  
-        if (head_ == nullptr) {
-            tail_ = nullptr;  
-        }
-        --size_;  
-        return data;  
-    }
-
-    // Получение элемента из начала очереди
-    T front() const {
-        if (head_ == nullptr) {  
-            throw std::out_of_range("Очередь пуста.");  
-        }
-        return head_->data;  
-    }
-
-    // Проверка пустоты очереди
-    bool empty() const {
-        return head_ == nullptr;  
-    }
-
-    // Получение размера очереди
-    size_t size() const {
-        return size_;  
-    }
-
-    // Очистка очереди
-    void clear() {
-        while (!empty()) {
-            pop();  
-        }
-        size_ = 0; 
-    }
-
-    // Перегрузка оператора вывода
-    friend std::ostream& operator<<(std::ostream& out, const TQueue<T>& queue) {
-        if (queue.empty()) {  
-            out << "Очередь пуста.";  
-            return out;
-        }
-        Node* current = queue.head_;
-        while (current != nullptr) {
-            out << current->data << " ";  
-            current = current->next;  
-        }
-        return out; 
-    }
-
+template <typename T>
+class Queue {
 private:
-    struct Node {
-        T data;  
-        Node* next;  
+    T* _data;
+    size_t _size;
+    size_t _front;
+    size_t _rear;
+    size_t _count;
 
-        Node(const T& data) : data(data), next(nullptr) {}  
-    };
+public:
+    explicit Queue(size_t size)
+        : _size(size),
+        _front(0),
+        _rear(size - 1),
+        _count(0) {
+        _data = new T[_size];
+    }
 
-    Node* head_;  
-    Node* tail_;  
-    size_t size_;  
+    ~Queue() {
+        delete[] _data;
+    }
+
+    //  метод для добавления элемента в очередь
+    void enqueue(const T& value) {
+        if (_count == _size) {
+            throw std::overflow_error("Queue overflow");
+        }
+        _rear = (_rear + 1) % _size;
+        _data[_rear] = value;
+        ++_count;
+    }
+
+    //  метод для удаления элемента из очереди
+    T dequeue() {
+        if (_count == 0) {
+            throw std::underflow_error("Queue underflow");
+        }
+        T value = _data[_front];
+        _front = (_front + 1) % _size;  
+        --_count;
+        return value;
+    }
+
+    //  метод для получения первого элемента без удаления
+    T front() const {
+        if (_count == 0) {
+            throw std::underflow_error("Queue is empty");
+        }
+        return _data[_front];
+    }
+
+    //  метод для проверки, пуста ли очередь
+    bool isEmpty() const {
+        return _count == 0;
+    }
+
+    //  метод для получения текущего размера очереди
+    size_t size() const {
+        return _count;
+    }
 };
 
 #endif  // LIB_QUEUE_QUEUE_H_

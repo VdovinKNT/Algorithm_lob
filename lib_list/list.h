@@ -1,280 +1,337 @@
-// Copyright 2024 Artem Vdovin
-
 #ifndef LIB_LIST_LIST_H_
 #define LIB_LIST_LIST_H_
 
 #include <iostream>
-#include <stdexcept> 
+#include <stdexcept>
 
 template <class T>
 class TNode {
+    T _value;
+    TNode<T>* _pnext;
+
 public:
-    T data;           
-    TNode* next;     
+    explicit TNode(T value) : _value(value), _pnext(nullptr) {}
+    TNode(const TNode& other) = default;
+    ~TNode() = default;
 
-    TNode() : data(), next(nullptr) {}
-    TNode(const T& data) : data(data), next(nullptr) {}
-    TNode(const TNode<T>& other) : data(other.data), next(other.next) {}
-
-    // Оператор присваивания
-    TNode<T>& operator=(const TNode<T>& other) {
-        if (this != &other) {
-            data = other.data;
-            next = other.next;
-        }
-        return *this;
-    }
-
-    // Оператор сравнения на равенство
+    TNode<T>& operator=(const TNode<T>& other) = default;
     bool operator==(const TNode<T>& other) const {
-        return data == other.data;
+        return _value == other._value;
     }
 
-    // Оператор сравнения на неравенство
-    bool operator!=(const TNode<T>& other) const {
-        return !(*this == other);
-    }
+    T& getValue() { return _value; }
+    const T& getValue() const { return _value; }
 
-    // Перегрузка оператора вывода
-    friend std::ostream& operator<<(std::ostream& out, const TNode<T>& node) {
-        out << node.data;
-        return out;
+    void setValue(T value) { _value = value; }
+
+    TNode<T>* getNext() const { return _pnext; }
+    void setNext(TNode<T>* next) { _pnext = next; }
+
+    friend std::ostream& operator<<(std::ostream& os, const TNode<T>& node) {
+        os << node._value;
+        return os;
     }
 };
 
 template <class T>
 class TList {
+    TNode<T>* _head;
+    TNode<T>* _tail;
+
 public:
-    TNode<T>* head;  
-    TNode<T>* tail;  
+    TList() : _head(nullptr), _tail(nullptr) {}
+    ~TList();
 
-    TList() : head(nullptr), tail(nullptr) {}
+    void insertFront(T value);
+    void insertBack(T value);
+    void insertAfter(TNode<T>* node, T value);
+    void insertAt(int pos, T value);
 
-    // Конструктор копирования
-    TList(const TList<T>& other) : head(nullptr), tail(nullptr) {
-        if (other.head == nullptr) {
-            return; 
+    TNode<T>* find(T value) const;
+
+    void removeFront();
+    void removeBack();
+    void removeAt(int pos);
+    void removeNode(TNode<T>* node);
+
+    void replaceNode(TNode<T>* node, T value);
+    void replaceAt(int pos, T value);
+
+    bool isEmpty() const { return _head == nullptr; }
+
+    TNode<T>* getHead() const { return _head; }
+
+    TList<T>& operator=(const TList<T>& other);
+
+    friend std::ostream& operator<<(std::ostream& os, const TList<T>& list) {
+        TNode<T>* current = list._head;
+        while (current) {
+            os << *current << " -> ";
+            current = current->getNext();
         }
-        TNode<T>* current = other.head;
-        while (current != nullptr) {
-            insert_tail(current->data);
-            current = current->next;
-        }
+        os << "null";
+        return os;
     }
 
-    ~TList() {
-        clear(); 
-    }
+    // вложенный класс для итератора
+    class Iterator {
+        TNode<T>* _current;
 
-    // Оператор присваивания
-    TList<T>& operator=(const TList<T>& other) {
-        if (this != &other) {
-            clear(); 
-            TNode<T>* current = other.head;
-            while (current != nullptr) {
-                insert_tail(current->data); 
-                current = current->next;
+    public:
+        explicit Iterator(TNode<T>* start) : _current(start) {}
+
+        bool hasNext() const { return _current != nullptr; }
+
+        T& next() {
+            if (!hasNext()) {
+                throw std::out_of_range("No more elements");
             }
+            T& value = _current->getValue();
+            _current = _current->getNext();
+            return value;
         }
+
+        T& getValue() const {
+            if (!_current) {
+                throw std::out_of_range("Iterator is out of range");
+            }
+            return _current->getValue();
+        }
+
+        void setValue(T value) {
+            if (!_current) {
+                throw std::out_of_range("Iterator is out of range");
+            }
+            _current->setValue(value);
+        }
+
+        Iterator& operator++() {
+            if (!hasNext()) {
+                throw std::out_of_range("No more elements");
+            }
+            _current = _current->getNext();
+            return *this;
+        }
+
+        bool operator!=(const Iterator& other) const {
+            return _current != other._current;
+        }
+
+        T& operator*() const { return getValue(); }
+    };
+
+    Iterator begin() { return Iterator(_head); }
+};
+
+template <class T>
+TList<T>::~TList() {
+    while (!isEmpty()) {
+        removeFront();
+    }
+}
+
+// вставка в начало списка
+template <class T>
+void TList<T>::insertFront(T value) {
+    TNode<T>* newNode = new TNode<T>(value);
+    newNode->setNext(_head);
+    _head = newNode;
+    if (!_tail) {
+        _tail = _head;
+    }
+}
+
+// вставка в конец списка
+template <class T>
+void TList<T>::insertBack(T value) {
+    TNode<T>* newNode = new TNode<T>(value);
+    if (isEmpty()) {
+        _head = _tail = newNode;
+    }
+    else {
+        _tail->setNext(newNode);
+        _tail = newNode;
+    }
+}
+
+// вставка после указанного узла
+template <class T>
+void TList<T>::insertAfter(TNode<T>* node, T value) {
+    if (!node) {
+        throw std::invalid_argument("Node cannot be null");
+    }
+    TNode<T>* newNode = new TNode<T>(value);
+    newNode->setNext(node->getNext());
+    node->setNext(newNode);
+    if (node == _tail) {
+        _tail = newNode;
+    }
+}
+
+// вставка на указанную позицию
+template <class T>
+void TList<T>::insertAt(int pos, T value) {
+    if (pos < 0) {
+        throw std::out_of_range("Position cannot be negative");
+    }
+    if (pos == 0) {
+        insertFront(value);
+        return;
+    }
+
+    TNode<T>* current = _head;
+    for (int i = 0; i < pos - 1 && current; ++i) {
+        current = current->getNext();
+    }
+    if (!current) {
+        throw std::out_of_range("Position out of range");
+    }
+
+    insertAfter(current, value);
+}
+
+// поиск по значению
+template <class T>
+TNode<T>* TList<T>::find(T value) const {
+    TNode<T>* current = _head;
+    while (current) {
+        if (current->getValue() == value) {
+            return current;
+        }
+        current = current->getNext();
+    }
+    return nullptr;
+}
+
+// удаление из начала списка
+template <class T>
+void TList<T>::removeFront() {
+    if (isEmpty()) {
+        throw std::out_of_range("List is empty");
+    }
+    TNode<T>* oldHead = _head;
+    _head = _head->getNext();
+    if (!_head) {
+        _tail = nullptr;
+    }
+    delete oldHead;
+}
+
+// удаление из конца списка
+template <class T>
+void TList<T>::removeBack() {
+    if (isEmpty()) {
+        throw std::out_of_range("List is empty");
+    }
+    if (_head == _tail) {
+        delete _head;
+        _head = _tail = nullptr;
+        return;
+    }
+
+    TNode<T>* current = _head;
+    while (current->getNext() != _tail) {
+        current = current->getNext();
+    }
+
+    delete _tail;
+    _tail = current;
+    _tail->setNext(nullptr);
+}
+
+// удаление по позиции
+template <class T>
+void TList<T>::removeAt(int pos) {
+    if (pos < 0 || isEmpty()) {
+        throw std::out_of_range("Invalid position or list is empty");
+    }
+    if (pos == 0) {
+        removeFront();
+        return;
+    }
+
+    TNode<T>* current = _head;
+    for (int i = 0; i < pos - 1 && current; ++i) {
+        current = current->getNext();
+    }
+    if (!current || !current->getNext()) {
+        throw std::out_of_range("Position out of range");
+    }
+
+    removeNode(current->getNext());
+}
+
+// удаление указанного узла
+template <class T>
+void TList<T>::removeNode(TNode<T>* node) {
+    if (isEmpty() || !node) {
+        throw std::invalid_argument("Invalid node or list is empty");
+    }
+    if (node == _head) {
+        removeFront();
+        return;
+    }
+
+    TNode<T>* current = _head;
+    while (current && current->getNext() != node) {
+        current = current->getNext();
+    }
+    if (!current) {
+        throw std::invalid_argument("Node not found");
+    }
+
+    current->setNext(node->getNext());
+    if (node == _tail) {
+        _tail = current;
+    }
+    delete node;
+}
+
+// замена значения указанного узла
+template <class T>
+void TList<T>::replaceNode(TNode<T>* node, T value) {
+    if (!node) {
+        throw std::invalid_argument("Node cannot be null");
+    }
+    node->setValue(value);
+}
+
+// замена значения по позиции
+template <class T>
+void TList<T>::replaceAt(int pos, T value) {
+    if (pos < 0) {
+        throw std::out_of_range("Position cannot be negative");
+    }
+
+    TNode<T>* current = _head;
+    for (int i = 0; i < pos && current; ++i) {
+        current = current->getNext();
+    }
+    if (!current) {
+        throw std::out_of_range("Position out of range");
+    }
+
+    current->setValue(value);
+}
+
+// оператор присваивания
+template <class T>
+TList<T>& TList<T>::operator=(const TList<T>& other) {
+    if (this == &other) {
         return *this;
     }
 
-    // Проверка пустоты списка
-    bool is_empty() const {
-        return head == nullptr;
+    while (!isEmpty()) {
+        removeFront();
     }
 
-    // Вставка элемента в конец списка
-    void insert_tail(const T& data) {
-        TNode<T>* new_node = new TNode<T>(data);
-        if (is_empty()) {
-            head = tail = new_node; 
-        }
-        else {
-            tail->next = new_node; 
-            tail = new_node;       
-        }
+    TNode<T>* current = other._head;
+    while (current) {
+        insertBack(current->getValue());
+        current = current->getNext();
     }
 
-    // Вставка элемента в начало списка
-    void insert_head(const T& data) {
-        TNode<T>* new_node = new TNode<T>(data);
-        if (is_empty()) {
-            head = tail = new_node; 
-        }
-        else {
-            new_node->next = head; 
-            head = new_node;       
-        }
-    }
-
-    // Вставка элемента после указанного узла
-    void insert_after(TNode<T>* node, const T& data) {
-        if (node == nullptr) {
-            throw std::runtime_error("Узел равен nullptr.");
-        }
-        TNode<T>* new_node = new TNode<T>(data);
-        new_node->next = node->next; 
-        node->next = new_node;       
-        if (node == tail) {
-            tail = new_node; 
-        }
-    }
-
-    // Вставка элемента на указанную позицию
-    void insert_at(size_t position, const T& data) {
-        if (position > size()) {
-            throw std::out_of_range("Позиция вне диапазона.");
-        }
-        if (position == 0) {
-            insert_head(data);
-            return;
-        }
-        TNode<T>* current = head;
-        size_t count = 0;
-        while (count < position - 1) {
-            current = current->next;
-            ++count;
-        }
-        insert_after(current, data); 
-    }
-
-    // Поиск элемента по значению
-    TNode<T>* find(const T& data) const {
-        TNode<T>* current = head;
-        while (current != nullptr) {
-            if (current->data == data) {
-                return current; 
-            }
-            current = current->next; 
-        }
-        return nullptr; 
-    }
-
-    // Удаление элемента из конца списка
-    void remove_tail() {
-        if (is_empty()) {
-            throw std::out_of_range("Список пуст.");
-        }
-        if (head == tail) {
-            delete head; 
-            head = tail = nullptr;
-            return;
-        }
-        TNode<T>* current = head;
-        while (current->next != tail) {
-            current = current->next;
-        }
-        delete tail; 
-        tail = current; 
-        tail->next = nullptr; 
-    }
-
-    // Удаление элемента из начала списка
-    void remove_head() {
-        if (is_empty()) {
-            throw std::out_of_range("Список пуст.");
-        }
-        TNode<T>* temp = head;
-        head = head->next; 
-        delete temp; 
-        if (head == nullptr) {
-            tail = nullptr; 
-        }
-    }
-
-    // Удаление указанного узла
-    void remove(TNode<T>* node) {
-        if (node == nullptr) {
-            throw std::runtime_error("Узел равен nullptr.");
-        }
-        if (node == head) {
-            remove_head(); 
-            return;
-        }
-        if (node == tail) {
-            remove_tail();
-            return;
-        }
-        TNode<T>* current = head;
-        while (current->next != node) {
-            current = current->next;
-        }
-        current->next = node->next; 
-        delete node; 
-    }
-
-    // Удаление узла по указанной позиции
-    void remove_at(size_t position) {
-        if (position >= size()) {
-            throw std::out_of_range("Позиция вне диапазона.");
-        }
-        if (position == 0) {
-            remove_head(); 
-            return;
-        }
-        TNode<T>* current = head;
-        size_t count = 0;
-        while (count < position - 1) { 
-            current = current->next;
-            ++count;
-        }
-        remove(current->next); 
-    }
-
-    // Замена значения указанного узла
-    void replace(TNode<T>* node, const T& new_data) {
-        if (node == nullptr) {
-            throw std::runtime_error("Узел равен nullptr.");
-        }
-        node->data = new_data; 
-    }
-
-    // Замена значения узла по указанной позиции
-    void replace_at(size_t position, const T& new_data) {
-        if (position >= size()) {
-            throw std::out_of_range("Позиция вне диапазона.");
-        }
-        TNode<T>* current = head;
-        size_t count = 0;
-        while (count < position) { 
-            current = current->next;
-            ++count;
-        }
-        replace(current, new_data);
-    }
-
-    // Очистка списка
-    void clear() {
-        while (!is_empty()) {
-            remove_head(); 
-        }
-    }
-
-    // Получение размера списка
-    size_t size() const {
-        size_t count = 0;
-        TNode<T>* current = head;
-        while (current != nullptr) {
-            ++count; 
-            current = current->next; 
-        }
-        return count; 
-    }
-
-    // Перегрузка оператора вывода
-    friend std::ostream& operator<<(std::ostream& out, const TList<T>& list) {
-        if (list.is_empty()) {
-            out << "Список пуст.";
-            return out;
-        }
-        TNode<T>* current = list.head;
-        while (current != nullptr) {
-            out << current->data << " "; 
-            current = current->next; 
-        }
-        return out; 
-    }
-};
+    return *this;
+}
 
 #endif  // LIB_LIST_LIST_H_

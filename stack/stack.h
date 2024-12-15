@@ -1,33 +1,31 @@
-// Copyright 2024 <Artem Vdovin>
-
 #ifndef STACK_H
 #define STACK_H
 
 #include <iostream>
 #include <stdexcept>
-#include <utility> 
+#include <utility>
 
 template <typename T>
 class TStack {
 public:
-    TStack() : _data(nullptr), _size(0), _top(0) {} 
+    TStack() : _data(nullptr), _size(0), _top(0) {}
 
     ~TStack() {
-        delete[] _data; 
+        delete[] _data;
     }
 
     // Копирующий конструктор
     TStack(const TStack& other) : _size(other._size), _top(other._top) {
-        _data = new T[_size]; 
+        _data = new T[_size];
         for (size_t i = 0; i < _top; ++i) {
-            _data[i] = other._data[i]; 
+            _data[i] = other._data[i];
         }
     }
 
     // Конструктор перемещения
     TStack(TStack&& other) noexcept
         : _data(other._data), _size(other._size), _top(other._top) {
-        other._data = nullptr; 
+        other._data = nullptr;
         other._size = 0;
         other._top = 0;
     }
@@ -35,12 +33,12 @@ public:
     // Оператор присваивания
     TStack& operator=(const TStack& other) {
         if (this != &other) {
-            delete[] _data; 
+            delete[] _data;
             _size = other._size;
             _top = other._top;
-            _data = new T[_size]; 
+            _data = new T[_size];
             for (size_t i = 0; i < _top; ++i) {
-                _data[i] = other._data[i]; 
+                _data[i] = other._data[i];
             }
         }
         return *this;
@@ -49,24 +47,25 @@ public:
     // Оператор присваивания перемещения
     TStack& operator=(TStack&& other) noexcept {
         if (this != &other) {
-            delete[] _data; 
-            _data = other._data; 
+            delete[] _data;
+            _data = other._data;
             _size = other._size;
             _top = other._top;
-            other._data = nullptr; 
+            other._data = nullptr;
             other._size = 0;
             other._top = 0;
         }
         return *this;
     }
 
+    // Оператор сравнения на равенство
     bool operator==(const TStack<T>& other) const {
         if (_top != other._top) {
-            return false; 
+            return false;
         }
         for (size_t i = 0; i < _top; ++i) {
             if (_data[i] != other._data[i]) {
-                return false; 
+                return false;
             }
         }
         return true;
@@ -80,15 +79,15 @@ public:
     // Добавление элемента в стек
     void push(const T& value) {
         if (_top == _size) {
-            resize(); 
+            resize();
         }
-        _data[_top++] = value; 
+        _data[_top++] = value;
     }
 
     // Извлечение элемента из стека
     void pop() {
         if (_top == 0) {
-            throw std::runtime_error("Стек пуст"); 
+            throw std::out_of_range("Стек пуст");
         }
         --_top;
     }
@@ -96,35 +95,35 @@ public:
     // Получение значения верхушки стека
     T top() const {
         if (_top == 0) {
-            throw std::runtime_error("Стек пуст");
+            throw std::out_of_range("Стек пуст");
         }
-        return _data[_top - 1]; 
+        return _data[_top - 1];
     }
 
     // Проверка пустоты стека
     bool empty() const {
-        return _top == 0; 
+        return _top == 0;
     }
 
-    // Размер стека 
+    // Размер стека
     size_t size() const {
-        return _top; 
+        return _top;
     }
 
 private:
     T* _data;
-    size_t _size; 
-    size_t _top; 
+    size_t _size;
+    size_t _top;
 
     // Увеличение размера массива в 2 раза
     void resize() {
-        size_t newSize = _size == 0 ? 1 : _size * 2; 
-        T* newData = new T[newSize]; 
+        size_t newSize = _size == 0 ? 1 : _size * 2;
+        T* newData = new T[newSize];
         for (size_t i = 0; i < _top; ++i) {
-            newData[i] = _data[i]; 
+            newData[i] = std::move(_data[i]);  
         }
-        delete[] _data; 
-        _data = newData; 
+        delete[] _data;
+        _data = newData;
         _size = newSize;
     }
 
@@ -132,7 +131,7 @@ private:
     friend std::ostream& operator<<(std::ostream& os, const TStack<T>& stack) {
         os << "Стек: ";
         for (size_t i = 0; i < stack._top; ++i) {
-            os << stack._data[i] << " "; 
+            os << stack._data[i] << " ";
         }
         return os;
     }

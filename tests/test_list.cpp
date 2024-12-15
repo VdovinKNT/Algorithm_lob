@@ -1,240 +1,266 @@
-// Copyright 2024 Artem Vdovin
+#include <gtest.h>
+#include "../lib_List/List.h"
 
-#include "gtest.h"
-#include "../lib_list/list.h" 
-
-// Тест для проверки пустого списка
-TEST(TListTest, Empty) {
+TEST(TListTest, can_create_empty_list) {
+    // Act & Assert
     TList<int> list;
-    ASSERT_TRUE(list.is_empty());
+    ASSERT_TRUE(list.isEmpty());
 }
 
-// Тест для проверки размера пустого списка
-TEST(TListTest, SizeEmpty) {
+TEST(TListTest, can_insert_front) {
+    // Arrange
     TList<int> list;
-    ASSERT_EQ(list.size(), 0);
+
+    // Act
+    list.insertFront(10);
+
+    // Assert
+    EXPECT_FALSE(list.isEmpty());
+    EXPECT_EQ(list.find(10)->getValue(), 10);
 }
 
-// Тест для проверки вставки элемента в конец списка
-TEST(TListTest, InsertTail) {
+TEST(TListTest, can_insert_back) {
+    // Arrange
     TList<int> list;
-    list.insert_tail(1);
-    ASSERT_EQ(list.size(), 1);
-    ASSERT_EQ(list.head->data, 1);
-    ASSERT_EQ(list.tail->data, 1);
+
+    // Act
+    list.insertBack(20);
+
+    // Assert
+    EXPECT_FALSE(list.isEmpty());
+    EXPECT_EQ(list.find(20)->getValue(), 20);
 }
 
-// Тест для проверки вставки элемента в начало списка
-TEST(TListTest, InsertHead) {
+TEST(TListTest, can_insert_after_node) {
+    // Arrange
     TList<int> list;
-    list.insert_head(1);
-    ASSERT_EQ(list.size(), 1);
-    ASSERT_EQ(list.head->data, 1);
-    ASSERT_EQ(list.tail->data, 1);
+    list.insertFront(10);
+    TNode<int>* node = list.find(10);
+
+    // Act
+    list.insertAfter(node, 15);
+
+    // Assert
+    EXPECT_EQ(list.find(15)->getValue(), 15);
 }
 
-// Тест для проверки вставки элемента после указанного узла
-TEST(TListTest, InsertAfter) {
+TEST(TListTest, can_insert_at_position) {
+    // Arrange
     TList<int> list;
-    list.insert_tail(1);
-    list.insert_tail(2);
-    list.insert_after(list.head, 3);
-    ASSERT_EQ(list.size(), 3);
-    ASSERT_EQ(list.head->data, 1);
-    ASSERT_EQ(list.head->next->data, 3);
-    ASSERT_EQ(list.tail->data, 2);
+    list.insertBack(10);
+    list.insertBack(20);
+
+    // Act
+    list.insertAt(1, 15);
+
+    // Assert
+    EXPECT_EQ(list.find(15)->getValue(), 15);
 }
 
-// Тест для проверки вставки элемента на указанную позицию
-TEST(TListTest, InsertAt) {
+TEST(TListTest, throws_when_insert_at_invalid_position) {
+    // Arrange
     TList<int> list;
-    list.insert_tail(1);
-    list.insert_tail(2);
-    list.insert_at(1, 3);
-    ASSERT_EQ(list.size(), 3);
-    ASSERT_EQ(list.head->data, 1);
-    ASSERT_EQ(list.head->next->data, 3);
-    ASSERT_EQ(list.tail->data, 2);
+
+    // Act & Assert
+    ASSERT_THROW(list.insertAt(-1, 10), std::out_of_range);
 }
 
-// Тест для проверки вставки элемента на первую позицию
-TEST(TListTest, InsertAtFirst) {
+TEST(TListTest, can_remove_front) {
+    // Arrange
     TList<int> list;
-    list.insert_tail(1);
-    list.insert_tail(2);
-    list.insert_at(0, 3);
-    ASSERT_EQ(list.size(), 3);
-    ASSERT_EQ(list.head->data, 3);
-    ASSERT_EQ(list.head->next->data, 1);
-    ASSERT_EQ(list.tail->data, 2);
+    list.insertFront(10);
+
+    // Act
+    list.removeFront();
+
+    // Assert
+    EXPECT_TRUE(list.isEmpty());
 }
 
-// Тест для проверки вставки элемента на позицию за пределами диапазона
-TEST(TListTest, InsertAtOutOfRange) {
+TEST(TListTest, can_remove_back) {
+    // Arrange
     TList<int> list;
-    list.insert_tail(1);
-    list.insert_tail(2);
-    ASSERT_THROW(list.insert_at(3, 3), std::out_of_range);
+    list.insertBack(20);
+
+    // Act
+    list.removeBack();
+
+    // Assert
+    EXPECT_TRUE(list.isEmpty());
 }
 
-// Тест для проверки поиска элемента по значению
-TEST(TListTest, Find) {
+TEST(TListTest, can_remove_at_position) {
+    // Arrange
     TList<int> list;
-    list.insert_tail(1);
-    list.insert_tail(2);
-    list.insert_tail(3);
-    TNode<int>* node = list.find(2);
-    ASSERT_NE(node, nullptr);
-    ASSERT_EQ(node->data, 2);
+    list.insertBack(10);
+    list.insertBack(20);
+    list.insertBack(30);
+
+    // Act
+    list.removeAt(1);
+
+    // Assert
+    EXPECT_EQ(list.find(20), nullptr);
 }
 
-// Тест для проверки поиска несуществующего элемента
-TEST(TListTest, FindNotFound) {
+TEST(TListTest, throws_when_remove_at_invalid_position) {
+    // Arrange
     TList<int> list;
-    list.insert_tail(1);
-    list.insert_tail(2);
-    list.insert_tail(3);
-    TNode<int>* node = list.find(4);
-    ASSERT_EQ(node, nullptr);
+    list.insertBack(10);
+
+    // Act & Assert
+    ASSERT_THROW(list.removeAt(-1), std::out_of_range);
 }
 
-// Тест для проверки удаления элемента из конца списка
-TEST(TListTest, RemoveTail) {
+TEST(TListTest, can_find_value) {
+    // Arrange
     TList<int> list;
-    list.insert_tail(1);
-    list.insert_tail(2);
-    list.insert_tail(3);
-    list.remove_tail();
-    ASSERT_EQ(list.size(), 2);
-    ASSERT_EQ(list.tail->data, 2);
+    list.insertBack(50);
+
+    // Act
+    TNode<int>* found = list.find(50);
+
+    // Assert
+    EXPECT_NE(found, nullptr);
+    EXPECT_EQ(found->getValue(), 50);
 }
 
-// Тест для проверки удаления элемента из начала списка
-TEST(TListTest, RemoveHead) {
+TEST(TListTest, returns_null_if_value_not_found) {
+    // Arrange
     TList<int> list;
-    list.insert_tail(1);
-    list.insert_tail(2);
-    list.insert_tail(3);
-    list.remove_head();
-    ASSERT_EQ(list.size(), 2);
-    ASSERT_EQ(list.head->data, 2);
+
+    // Act
+    TNode<int>* found = list.find(100);
+
+    // Assert
+    EXPECT_EQ(found, nullptr);
 }
 
-// Тест для проверки удаления указанного узла
-TEST(TListTest, Remove) {
+TEST(TListTest, can_replace_node_value) {
+    // Arrange
     TList<int> list;
-    list.insert_tail(1);
-    list.insert_tail(2);
-    list.insert_tail(3);
-    list.remove(list.head->next);
-    ASSERT_EQ(list.size(), 2);
-    ASSERT_EQ(list.head->data, 1);
-    ASSERT_EQ(list.tail->data, 3);
+    list.insertBack(10);
+    TNode<int>* node = list.find(10);
+
+    // Act
+    list.replaceNode(node, 20);
+
+    // Assert
+    EXPECT_EQ(list.find(20)->getValue(), 20);
 }
 
-// Тест для проверки удаления узла по указанной позиции
-TEST(TListTest, RemoveAt) {
+TEST(TListTest, can_replace_value_at_position) {
+    // Arrange
     TList<int> list;
-    list.insert_tail(1);
-    list.insert_tail(2);
-    list.insert_tail(3);
-    list.remove_at(1);
-    ASSERT_EQ(list.size(), 2);
-    ASSERT_EQ(list.head->data, 1);
-    ASSERT_EQ(list.tail->data, 3);
+    list.insertBack(10);
+
+    // Act
+    list.replaceAt(0, 20);
+
+    // Assert
+    EXPECT_EQ(list.find(20)->getValue(), 20);
 }
 
-// Тест для проверки удаления узла из пустого списка
-TEST(TListTest, RemoveFromEmptyList) {
+TEST(TListTest, throws_when_replace_at_invalid_position) {
+    // Arrange
     TList<int> list;
-    ASSERT_THROW(list.remove_tail(), std::out_of_range);
-    ASSERT_THROW(list.remove_head(), std::out_of_range);
+
+    // Act & Assert
+    ASSERT_THROW(list.replaceAt(-1, 10), std::out_of_range);
 }
 
-// Тест для проверки удаления узла за пределами диапазона
-TEST(TListTest, RemoveAtOutOfRange) {
-    TList<int> list;
-    list.insert_tail(1);
-    list.insert_tail(2);
-    list.insert_tail(3);
-    ASSERT_THROW(list.remove_at(4), std::out_of_range);
-}
-
-// Тест для проверки замены значения указанного узла
-TEST(TListTest, Replace) {
-    TList<int> list;
-    list.insert_tail(1);
-    list.insert_tail(2);
-    list.insert_tail(3);
-    list.replace(list.head->next, 4);
-    ASSERT_EQ(list.head->next->data, 4);
-}
-
-// Тест для проверки замены значения узла по указанной позиции
-TEST(TListTest, ReplaceAt) {
-    TList<int> list;
-    list.insert_tail(1);
-    list.insert_tail(2);
-    list.insert_tail(3);
-    list.replace_at(1, 4);
-    ASSERT_EQ(list.head->next->data, 4);
-}
-
-// Тест для проверки замены значения узла за пределами диапазона
-TEST(TListTest, ReplaceAtOutOfRange) {
-    TList<int> list;
-    list.insert_tail(1);
-    list.insert_tail(2);
-    list.insert_tail(3);
-    ASSERT_THROW(list.replace_at(4, 4), std::out_of_range);
-}
-
-// Тест для проверки очистки списка
-TEST(TListTest, Clear) {
-    TList<int> list;
-    list.insert_tail(1);
-    list.insert_tail(2);
-    list.insert_tail(3);
-    list.clear();
-    ASSERT_TRUE(list.is_empty());
-    ASSERT_EQ(list.size(), 0);
-}
-
-// Тест для проверки оператора вывода
-TEST(TListTest, OperatorOutput) {
-    TList<int> list;
-    list.insert_tail(1);
-    list.insert_tail(2);
-    list.insert_tail(3);
-    std::stringstream ss;
-    ss << list;
-    ASSERT_EQ(ss.str(), "1 2 3 ");
-}
-
-// Тест для проверки конструктора копирования
-TEST(TListTest, CopyConstructor) {
+TEST(TListTest, can_assign_list) {
+    // Arrange
     TList<int> list1;
-    list1.insert_tail(1);
-    list1.insert_tail(2);
-    list1.insert_tail(3);
-    TList<int> list2(list1);
-    ASSERT_EQ(list2.size(), 3);
-    ASSERT_EQ(list2.head->data, 1);
-    ASSERT_EQ(list2.head->next->data, 2);
-    ASSERT_EQ(list2.tail->data, 3);
-}
+    list1.insertBack(10);
+    list1.insertBack(20);
 
-// Тест для проверки оператора присваивания
-TEST(TListTest, OperatorAssign) {
-    TList<int> list1;
-    list1.insert_tail(1);
-    list1.insert_tail(2);
-    list1.insert_tail(3);
     TList<int> list2;
+
+    // Act
     list2 = list1;
-    ASSERT_EQ(list2.size(), 3);
-    ASSERT_EQ(list2.head->data, 1);
-    ASSERT_EQ(list2.head->next->data, 2);
-    ASSERT_EQ(list2.tail->data, 3);
+
+    // Assert
+    EXPECT_EQ(list2.find(10)->getValue(), 10);
+    EXPECT_EQ(list2.find(20)->getValue(), 20);
 }
 
+TEST(TNodeTest, can_copy_node) {
+    // Arrange
+    TNode<int> node(10);
+
+    // Act
+    TNode<int> copyNode = node;
+
+    // Assert
+    EXPECT_EQ(copyNode.getValue(), node.getValue());
+}
+
+TEST(TNodeTest, can_compare_nodes) {
+    // Arrange
+    TNode<int> node1(10);
+    TNode<int> node2(10);
+    TNode<int> node3(20);
+
+    // Assert
+    EXPECT_TRUE(node1 == node2);
+    EXPECT_FALSE(node1 == node3);
+}
+
+TEST(TListTest, throws_when_insert_after_null) {
+    // Arrange
+    TList<int> list;
+
+    // Act & Assert
+    ASSERT_THROW(list.insertAfter(nullptr, 10), std::invalid_argument);
+}
+
+TEST(TListTest, throws_when_remove_non_existent_node) {
+    // Arrange
+    TList<int> list;
+    list.insertBack(10);
+    TNode<int>* node = new TNode<int>(20);
+
+    // Act & Assert
+    ASSERT_THROW(list.removeNode(node), std::invalid_argument);
+    delete node;
+}
+
+TEST(TListTest, can_remove_node_by_pointer) {
+    // Arrange
+    TList<int> list;
+    list.insertBack(10);
+    TNode<int>* node = list.find(10);
+
+    // Act
+    list.removeNode(node);
+
+    // Assert
+    EXPECT_TRUE(list.isEmpty());
+}
+
+TEST(TNodeTest, can_print_node) {
+    // Arrange
+    TNode<int> node(10);
+    std::stringstream ss;
+
+    // Act
+    ss << node;
+
+    // Assert
+    EXPECT_EQ(ss.str(), "10");
+}
+
+TEST(TListTest, can_print_list) {
+    // Arrange
+    TList<int> list;
+    list.insertBack(10);
+    list.insertBack(20);
+    std::stringstream ss;
+
+    // Act
+    ss << list;
+
+    // Assert
+    EXPECT_EQ(ss.str(), "10 -> 20 -> null");
+}

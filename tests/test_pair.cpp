@@ -3,6 +3,7 @@
 #include "gtest.h"
 #include "../lib_pair/pair.h"
 
+
 // Проверка конструктора по умолчанию
 TEST(TPairTest, DefaultConstructor) {
     TPair<int, std::string> p;
@@ -23,6 +24,26 @@ TEST(TPairTest, CopyConstructor) {
     TPair<int, std::string> p2(p1);
     ASSERT_EQ(p2.first, 5);
     ASSERT_EQ(p2.second, "World");
+}
+
+// Проверка оператора присваивания
+TEST(TPairTest, AssignmentOperator) {
+    TPair<int, std::string> p1(7, "Assign");
+    TPair<int, std::string> p2;
+    p2 = p1;
+    ASSERT_EQ(p2.first, 7);
+    ASSERT_EQ(p2.second, "Assign");
+}
+
+// Проверка функции swap
+TEST(TPairTest, SwapFunction) {
+    TPair<int, std::string> p1(8, "First");
+    TPair<int, std::string> p2(9, "Second");
+    p1.swap(p2);
+    ASSERT_EQ(p1.first, 9);
+    ASSERT_EQ(p1.second, "Second");
+    ASSERT_EQ(p2.first, 8);
+    ASSERT_EQ(p2.second, "First");
 }
 
 // Проверка оператора равенства
@@ -47,20 +68,9 @@ TEST(TPairTest, OutputOperator) {
     ASSERT_EQ(ss.str(), "(3, Test)");
 }
 
-// Проверка арифметических операторов
-TEST(TPairTest, ArithmeticOperators) {
-    TPair<int, int> p1(1, 2);
-    TPair<int, int> p2(3, 4);
-    TPair<int, int> p3 = p1 + p2;
-    ASSERT_EQ(p3.first, 4);
-    ASSERT_EQ(p3.second, 6);
-    p1 += p2;
-    ASSERT_EQ(p1.first, 4);
-    ASSERT_EQ(p1.second, 6);
-    p3 = p1 -= p2;
-    ASSERT_EQ(p3.first, 1);
-    ASSERT_EQ(p3.second, 2);
-    p1 -= p2;
-    ASSERT_EQ(p1.first, 1);
-    ASSERT_EQ(p1.second, 2);
+// Проверка функции make_pair
+TEST(TPairTest, MakePairFunction) {
+    auto p = make_pair(42, std::string("Hello MakePair"));
+    ASSERT_EQ(p.first, 42);
+    ASSERT_EQ(p.second, "Hello MakePair");
 }
