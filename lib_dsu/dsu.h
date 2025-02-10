@@ -45,7 +45,7 @@ int DSU::find(int elem) {
         throw std::logic_error("Input Error: Element out of range.");
     }
     elem--;
-    if (_parent[elem] != elem + 1) {
+    if (_parent[elem] != elem) {
         _parent[elem] = find(_parent[elem]); 
     }
     return _parent[elem];
