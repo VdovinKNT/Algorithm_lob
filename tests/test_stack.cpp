@@ -1,25 +1,22 @@
-#include "gtest.h"
+п»ї#include "gtest.h"
 #include "../stack/stack.h"
 
-// Проверка пустого стека
 TEST(TStackTest, Empty) {
-    TStack<int> stack;
-    ASSERT_TRUE(stack.empty());
+    TStack<int> stack(10);
+    ASSERT_TRUE(stack.isEmpty());
     ASSERT_EQ(stack.size(), 0);
 }
 
-// Проверка добавления элемента в стек
 TEST(TStackTest, Push) {
-    TStack<int> stack;
+    TStack<int> stack(10);
     stack.push(1);
-    ASSERT_FALSE(stack.empty());
+    ASSERT_FALSE(stack.isEmpty());
     ASSERT_EQ(stack.size(), 1);
     ASSERT_EQ(stack.top(), 1);
 }
 
-// Проверка добавления нескольких элементов в стек
 TEST(TStackTest, PushMultiple) {
-    TStack<int> stack;
+    TStack<int> stack(10);
     stack.push(1);
     stack.push(2);
     stack.push(3);
@@ -27,79 +24,47 @@ TEST(TStackTest, PushMultiple) {
     ASSERT_EQ(stack.top(), 3);
 }
 
-// Проверка удаления элемента из стека
 TEST(TStackTest, Pop) {
-    TStack<int> stack;
+    TStack<int> stack(10);
     stack.push(1);
     stack.push(2);
-    stack.pop();
+    ASSERT_EQ(stack.pop(), 2);
     ASSERT_EQ(stack.top(), 1);
     ASSERT_EQ(stack.size(), 1);
 }
 
-// Проверка удаления элемента из пустого стека 
 TEST(TStackTest, PopEmpty) {
-    TStack<int> stack;
-    ASSERT_THROW(stack.pop(), std::runtime_error);
+    TStack<int> stack(10);
+    ASSERT_THROW(stack.pop(), std::underflow_error);
 }
 
-// Проверка получения значения вершины стека
 TEST(TStackTest, Top) {
-    TStack<int> stack;
+    TStack<int> stack(10);
     stack.push(1);
     stack.push(2);
     ASSERT_EQ(stack.top(), 2);
 }
 
-// Проверка получения значения вершины пустого стека 
 TEST(TStackTest, TopEmpty) {
-    TStack<int> stack;
-    ASSERT_THROW(stack.top(), std::runtime_error);
+    TStack<int> stack(10);
+    ASSERT_THROW(stack.top(), std::underflow_error);
 }
 
-// Проверка конструктора копирования
-TEST(TStackTest, CopyConstructor) {
-    TStack<int> stack1;
-    stack1.push(1);
-    stack1.push(2);
-    TStack<int> stack2(stack1);
-    ASSERT_EQ(stack2.size(), 2);
-    ASSERT_EQ(stack2.top(), 2);
+TEST(TStackTest, Overflow) {
+    TStack<int> stack(2);
+    stack.push(1);
+    stack.push(2);
+    ASSERT_THROW(stack.push(3), std::overflow_error);
 }
 
-// Проверка оператора присваивания
-TEST(TStackTest, CopyAssignment) {
-    TStack<int> stack1;
-    stack1.push(1);
-    stack1.push(2);
-    TStack<int> stack2;
-    stack2 = stack1;
-    ASSERT_EQ(stack2.size(), 2);
-    ASSERT_EQ(stack2.top(), 2);
+TEST(ExpressionValidationTest, ValidExpressions) {
+    ASSERT_TRUE(isValidExpression("(a+b)*[c-d]"));
+    ASSERT_TRUE(isValidExpression("{[()]}"));
+    ASSERT_TRUE(isValidExpression("|a| + |b|"));
 }
 
-// Проверка конструктора перемещения
-TEST(TStackTest, MoveConstructor) {
-    TStack<int> stack1;
-    stack1.push(1);
-    stack1.push(2);
-    TStack<int> stack2(std::move(stack1));
-    ASSERT_EQ(stack2.size(), 2);
-    ASSERT_EQ(stack2.top(), 2);
-    ASSERT_TRUE(stack1.empty());
+TEST(ExpressionValidationTest, InvalidExpressions) {
+    ASSERT_FALSE(isValidExpression("(a+b]*c-d)"));
+    ASSERT_FALSE(isValidExpression("{[(])}"));
+    ASSERT_FALSE(isValidExpression("|a| + b|"));
 }
-
-// Проверка оператора перемещения
-TEST(TStackTest, MoveAssignment) {
-    TStack<int> stack1;
-    stack1.push(1);
-    stack1.push(2);
-    TStack<int> stack2;
-    stack2 = std::move(stack1);
-    ASSERT_EQ(stack2.size(), 2);
-    ASSERT_EQ(stack2.top(), 2);
-    ASSERT_TRUE(stack1.empty());
-}
-
-
-

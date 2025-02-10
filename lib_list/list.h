@@ -73,15 +73,13 @@ public:
         return os;
     }
 
-    // вложенный класс для итератора
+    // итератор
     class Iterator {
         TNode<T>* _current;
 
     public:
         explicit Iterator(TNode<T>* start) : _current(start) {}
-
         bool hasNext() const { return _current != nullptr; }
-
         T& next() {
             if (!hasNext()) {
                 throw std::out_of_range("No more elements");
@@ -90,21 +88,18 @@ public:
             _current = _current->getNext();
             return value;
         }
-
         T& getValue() const {
             if (!_current) {
                 throw std::out_of_range("Iterator is out of range");
             }
             return _current->getValue();
         }
-
         void setValue(T value) {
             if (!_current) {
                 throw std::out_of_range("Iterator is out of range");
             }
             _current->setValue(value);
         }
-
         Iterator& operator++() {
             if (!hasNext()) {
                 throw std::out_of_range("No more elements");
@@ -112,14 +107,11 @@ public:
             _current = _current->getNext();
             return *this;
         }
-
         bool operator!=(const Iterator& other) const {
             return _current != other._current;
         }
-
         T& operator*() const { return getValue(); }
     };
-
     Iterator begin() { return Iterator(_head); }
 };
 

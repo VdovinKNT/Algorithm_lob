@@ -1,3 +1,5 @@
+// Copyright 2024 Ivan Karpich
+
 #ifndef LIB_VECTOR_VECTOR_H_
 #define LIB_VECTOR_VECTOR_H_
 
@@ -66,12 +68,18 @@ Vector<T>& Vector<T>::operator=(const Vector<T>& other) {
 
 template <typename T>
 T& Vector<T>::operator[](size_t index) {
-    return _data[index];
+    if (index < _start_index || index >= _start_index + size()) {
+        throw std::out_of_range("Index out of range");
+    }
+    return _data[index - _start_index];
 }
 
 template <typename T>
 const T& Vector<T>::operator[](size_t index) const {
-    return _data[index];
+    if (index < _start_index || index >= _start_index + size()) {
+        throw std::out_of_range("Index out of range");
+    }
+    return _data[index - _start_index];
 }
 
 template <typename T>

@@ -1,4 +1,4 @@
-// Copyright 2024 Artem Vdovin
+// Copyright 2024 Ivan Karpich
 
 #ifndef LIB_DMASSIVE_DMASSIVE_H_
 #define LIB_DMASSIVE_DMASSIVE_H_

@@ -1,140 +1,93 @@
-#ifndef STACK_H
-#define STACK_H
+п»ї// Copyright 2024 Artem Vdovin
+
+#ifndef LIB_STACK_STACK_H_
+#define LIB_STACK_STACK_H_
 
 #include <iostream>
 #include <stdexcept>
-#include <utility>
+#include <string>
+#include <stack>
 
 template <typename T>
 class TStack {
-public:
-    TStack() : _data(nullptr), _size(0), _top(0) {}
-
-    ~TStack() {
-        delete[] _data;
-    }
-
-    // Копирующий конструктор
-    TStack(const TStack& other) : _size(other._size), _top(other._top) {
-        _data = new T[_size];
-        for (size_t i = 0; i < _top; ++i) {
-            _data[i] = other._data[i];
-        }
-    }
-
-    // Конструктор перемещения
-    TStack(TStack&& other) noexcept
-        : _data(other._data), _size(other._size), _top(other._top) {
-        other._data = nullptr;
-        other._size = 0;
-        other._top = 0;
-    }
-
-    // Оператор присваивания
-    TStack& operator=(const TStack& other) {
-        if (this != &other) {
-            delete[] _data;
-            _size = other._size;
-            _top = other._top;
-            _data = new T[_size];
-            for (size_t i = 0; i < _top; ++i) {
-                _data[i] = other._data[i];
-            }
-        }
-        return *this;
-    }
-
-    // Оператор присваивания перемещения
-    TStack& operator=(TStack&& other) noexcept {
-        if (this != &other) {
-            delete[] _data;
-            _data = other._data;
-            _size = other._size;
-            _top = other._top;
-            other._data = nullptr;
-            other._size = 0;
-            other._top = 0;
-        }
-        return *this;
-    }
-
-    // Оператор сравнения на равенство
-    bool operator==(const TStack<T>& other) const {
-        if (_top != other._top) {
-            return false;
-        }
-        for (size_t i = 0; i < _top; ++i) {
-            if (_data[i] != other._data[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // Оператор сравнения на неравенство
-    bool operator!=(const TStack<T>& other) const {
-        return !(*this == other);
-    }
-
-    // Добавление элемента в стек
-    void push(const T& value) {
-        if (_top == _size) {
-            resize();
-        }
-        _data[_top++] = value;
-    }
-
-    // Извлечение элемента из стека
-    void pop() {
-        if (_top == 0) {
-            throw std::out_of_range("Стек пуст");
-        }
-        --_top;
-    }
-
-    // Получение значения верхушки стека
-    T top() const {
-        if (_top == 0) {
-            throw std::out_of_range("Стек пуст");
-        }
-        return _data[_top - 1];
-    }
-
-    // Проверка пустоты стека
-    bool empty() const {
-        return _top == 0;
-    }
-
-    // Размер стека
-    size_t size() const {
-        return _top;
-    }
-
 private:
     T* _data;
     size_t _size;
     size_t _top;
 
-    // Увеличение размера массива в 2 раза
-    void resize() {
-        size_t newSize = _size == 0 ? 1 : _size * 2;
-        T* newData = new T[newSize];
-        for (size_t i = 0; i < _top; ++i) {
-            newData[i] = std::move(_data[i]);  
-        }
-        delete[] _data;
-        _data = newData;
-        _size = newSize;
+public:
+    explicit TStack(size_t size) : _size(size), _top(0) {
+        _data = new T[_size];
     }
 
-    // Функция-друг для вывода содержимого стека
-    friend std::ostream& operator<<(std::ostream& os, const TStack<T>& stack) {
-        os << "Стек: ";
-        for (size_t i = 0; i < stack._top; ++i) {
-            os << stack._data[i] << " ";
+    ~TStack() {
+        delete[] _data;
+    }
+
+    //  РјРµС‚РѕРґ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ СЌР»РµРјРµРЅС‚Р° РІ СЃС‚РµРє
+    void push(const T& value) {
+        if (_top >= _size) {
+            throw std::overflow_error("Stack overflow");
         }
-        return os;
+        _data[_top++] = value;
+    }
+
+    //  РјРµС‚РѕРґ РґР»СЏ СѓРґР°Р»РµРЅРёСЏ СЌР»РµРјРµРЅС‚Р° РёР· СЃС‚РµРєР°
+    T pop() {
+        if (_top == 0) {
+            throw std::underflow_error("Stack underflow");
+        }
+        return _data[--_top];
+    }
+
+    //  РјРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РІРµСЂС…РЅРµРіРѕ СЌР»РµРјРµРЅС‚Р° Р±РµР· СѓРґР°Р»РµРЅРёСЏ
+    T top() const {
+        if (_top == 0) {
+            throw std::underflow_error("Stack is empty");
+        }
+        return _data[_top - 1];
+    }
+
+    //  РјРµС‚РѕРґ РґР»СЏ РїСЂРѕРІРµСЂРєРё, РїСѓСЃС‚ Р»Рё СЃС‚РµРє
+    bool isEmpty() const {
+        return _top == 0;
+    }
+
+    //  РјРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ С‚РµРєСѓС‰РµРіРѕ СЂР°Р·РјРµСЂР° СЃС‚РµРєР°
+    size_t size() const {
+        return _top;
     }
 };
 
-#endif // STACK_H
+//  С„СѓРЅРєС†РёСЏ РґР»СЏ РїСЂРѕРІРµСЂРєРё РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚Рё РІС‹СЂР°Р¶РµРЅРёР№
+inline bool isValidExpression(const std::string& expression) {
+    std::stack<char> s;
+    for (char ch : expression) {
+        if (ch == '(' || ch == '[' || ch == '{' || ch == '|') {
+            if (ch == '|' && !s.empty() && s.top() == '|') {
+                s.pop();
+            }
+            else {
+                s.push(ch);
+            }
+        }
+        else if (ch == ')' || ch == ']' || ch == '}' || ch == '|') {
+            if (s.empty()) {
+                return false;
+            }
+            char top = s.top();
+            if ((ch == ')' && top == '(') ||
+                (ch == ']' && top == '[') ||
+                (ch == '}' && top == '{') ||
+                (ch == '|' && top == '|')) {
+                s.pop();
+            }
+            else {
+                return false;
+            }
+        }
+    }
+    return s.empty();
+}
+
+#endif  // LIB_STACK_STACK_H_
