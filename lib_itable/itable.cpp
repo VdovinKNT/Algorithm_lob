@@ -1,4 +1,4 @@
-// Copyright 2024 <Artem Vdovin>
+// Copyright 2025 <Artem Vdovin>
 
 #include "../lib_itable/itable.h" 
 
