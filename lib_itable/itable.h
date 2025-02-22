@@ -31,4 +31,18 @@ public:
         }
         throw std::runtime_error("Ключ не найден");
     }
+
+    TVal& find(Key key) {
+        for (auto& pair : data) {
+            if (pair.first == key) {
+                return pair.second;
+            }
+        }
+        throw std::runtime_error("Ключ не найден");
+    }
+
+    TVal& operator[](Key key) {
+        return find(key);
+    }
+
 };
