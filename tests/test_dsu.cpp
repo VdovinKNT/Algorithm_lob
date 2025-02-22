@@ -104,6 +104,6 @@ TEST(DSU, find_with_path_compression) {
     // Act
     int root = dsu.find(4);
 
-    // Assert (check path compression by ensuring parent of 2 is now root)
+    // Assert 
     EXPECT_EQ(root, dsu.find(2));
 }
