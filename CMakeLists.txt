@@ -22,6 +22,7 @@ add_subdirectory(lib_list)            # подключаем дополните�
 add_subdirectory(lib_stack_list)      # подключаем дополнительный CMakeLists.txt из подкаталога с именем lib_Stack_List
 add_subdirectory(lib_dsu)
 add_subdirectory(lib_itable) 
+add_subdirectory(lib_sortlist) 
 
 
 add_subdirectory(main)                # подключаем дополнительный CMakeLists.txt из подкаталога с именем main

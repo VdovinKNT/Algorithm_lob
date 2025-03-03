@@ -33,7 +33,7 @@ public:
     }
 };
 
-template <class T>
+template <typename T>
 class TList {
     TNode<T>* _head;
     TNode<T>* _tail;
@@ -73,7 +73,22 @@ public:
         return os;
     }
 
-    // итератор
+    // Оператор сравнения для списков
+    friend bool operator==(const TList<T>& lhs, const TList<T>& rhs) {
+        TNode<T>* node1 = lhs._head;
+        TNode<T>* node2 = rhs._head;
+
+        while (node1 && node2) {
+            if (node1->getValue() != node2->getValue()) {
+                return false;
+            }
+            node1 = node1->getNext();
+            node2 = node2->getNext();
+        }
+
+        return node1 == nullptr && node2 == nullptr; // Оба списка должны закончиться одновременно
+    }
+
     class Iterator {
         TNode<T>* _current;
 
@@ -122,7 +137,6 @@ TList<T>::~TList() {
     }
 }
 
-// вставка в начало списка
 template <class T>
 void TList<T>::insertFront(T value) {
     TNode<T>* newNode = new TNode<T>(value);
@@ -133,7 +147,6 @@ void TList<T>::insertFront(T value) {
     }
 }
 
-// вставка в конец списка
 template <class T>
 void TList<T>::insertBack(T value) {
     TNode<T>* newNode = new TNode<T>(value);
@@ -146,7 +159,6 @@ void TList<T>::insertBack(T value) {
     }
 }
 
-// вставка после указанного узла
 template <class T>
 void TList<T>::insertAfter(TNode<T>* node, T value) {
     if (!node) {
@@ -160,7 +172,6 @@ void TList<T>::insertAfter(TNode<T>* node, T value) {
     }
 }
 
-// вставка на указанную позицию
 template <class T>
 void TList<T>::insertAt(int pos, T value) {
     if (pos < 0) {
@@ -182,7 +193,6 @@ void TList<T>::insertAt(int pos, T value) {
     insertAfter(current, value);
 }
 
-// поиск по значению
 template <class T>
 TNode<T>* TList<T>::find(T value) const {
     TNode<T>* current = _head;
@@ -195,7 +205,6 @@ TNode<T>* TList<T>::find(T value) const {
     return nullptr;
 }
 
-// удаление из начала списка
 template <class T>
 void TList<T>::removeFront() {
     if (isEmpty()) {
@@ -209,7 +218,6 @@ void TList<T>::removeFront() {
     delete oldHead;
 }
 
-// удаление из конца списка
 template <class T>
 void TList<T>::removeBack() {
     if (isEmpty()) {
@@ -231,7 +239,6 @@ void TList<T>::removeBack() {
     _tail->setNext(nullptr);
 }
 
-// удаление по позиции
 template <class T>
 void TList<T>::removeAt(int pos) {
     if (pos < 0 || isEmpty()) {
@@ -253,7 +260,6 @@ void TList<T>::removeAt(int pos) {
     removeNode(current->getNext());
 }
 
-// удаление указанного узла
 template <class T>
 void TList<T>::removeNode(TNode<T>* node) {
     if (isEmpty() || !node) {
@@ -279,7 +285,6 @@ void TList<T>::removeNode(TNode<T>* node) {
     delete node;
 }
 
-// замена значения указанного узла
 template <class T>
 void TList<T>::replaceNode(TNode<T>* node, T value) {
     if (!node) {
@@ -288,7 +293,6 @@ void TList<T>::replaceNode(TNode<T>* node, T value) {
     node->setValue(value);
 }
 
-// замена значения по позиции
 template <class T>
 void TList<T>::replaceAt(int pos, T value) {
     if (pos < 0) {
@@ -306,7 +310,6 @@ void TList<T>::replaceAt(int pos, T value) {
     current->setValue(value);
 }
 
-// оператор присваивания
 template <class T>
 TList<T>& TList<T>::operator=(const TList<T>& other) {
     if (this == &other) {
