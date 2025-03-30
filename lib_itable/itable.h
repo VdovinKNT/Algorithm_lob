@@ -1,48 +1,16 @@
-#include <vector>
-#include <utility>
-#include <stdexcept>
+// Copyright 2025 <Artem Vdovin>
 
-template <class Key, class TVal>
-class Table {
-private:
-    std::vector<std::pair<Key, TVal>> data;
+#ifndef LIB_ITABLE_LIB_ITABLE_HEDER_H_
+#define LIB_ITABLE_LIB_ITABLE_HEDER_H_
 
+template <class TKey, class TVal>
+class ITable {
 public:
-    void insert(TVal value) {
-        Key key = static_cast<Key>(data.size()); 
-        data.emplace_back(key, value);
-    }
-
-    void insert(Key key, TVal value) {
-        for (const auto& pair : data) {
-            if (pair.first == key) {
-                throw std::runtime_error("Ключ уже существует");
-            }
-        }
-        data.emplace_back(key, value);
-    }
-
-    void erase(Key key) {
-        for (auto it = data.begin(); it != data.end(); ++it) {
-            if (it->first == key) {
-                data.erase(it);
-                return;
-            }
-        }
-        throw std::runtime_error("Ключ не найден");
-    }
-
-    TVal& find(Key key) {
-        for (auto& pair : data) {
-            if (pair.first == key) {
-                return pair.second;
-            }
-        }
-        throw std::runtime_error("Ключ не найден");
-    }
-
-    TVal& operator[](Key key) {
-        return find(key);
-    }
-
+    virtual TKey insert(TVal val) = 0;
+    virtual void insert(TKey key, TVal val) = 0;
+    virtual void erase(TKey key) = 0;
+    virtual TVal find(TKey key) = 0;
+    virtual TVal operator[](TKey key) = 0;
 };
+
+#endif  // LIB_ITABLE_LIB_ITABLE_HEDER_H_

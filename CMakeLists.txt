@@ -24,6 +24,7 @@ add_subdirectory(lib_dsu)
 add_subdirectory(lib_itable) 
 add_subdirectory(lib_sortlist) 
 add_subdirectory(lib_treeoutput) 
+add_subdirectory(lib_unsortedtable) 
 
 
 add_subdirectory(main)                # подключаем дополнительный CMakeLists.txt из подкаталога с именем main

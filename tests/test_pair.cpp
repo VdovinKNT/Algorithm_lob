@@ -1,76 +1,149 @@
-// Copyright 2024 <Artem Vdovin>
+// Copyright 2024 Ivan Karpich
 
-#include "gtest.h"
+#include <gtest.h>
+#include <utility>
+#include <string>
 #include "../lib_pair/pair.h"
 
+#define EPSILON 0.000001
 
-// Проверка конструктора по умолчанию
+// тест конструкторов
 TEST(TPairTest, DefaultConstructor) {
-    TPair<int, std::string> p;
-    ASSERT_EQ(p.first, 0);
-    ASSERT_EQ(p.second, "");
+    // Arrange & Act
+    TPair<int, double> pair;
+
+    // Assert
+    EXPECT_EQ(pair.first(), 0);
+    EXPECT_EQ(pair.second(), 0.0);
 }
 
-// Проверка параметризированного конструктора
 TEST(TPairTest, ParameterizedConstructor) {
-    TPair<int, std::string> p(10, "Hello");
-    ASSERT_EQ(p.first, 10);
-    ASSERT_EQ(p.second, "Hello");
+    // Arrange
+    int first = 1;
+    double second = 2.5;
+
+    // Act
+    TPair<int, double> pair(first, second);
+
+    // Assert
+    EXPECT_EQ(pair.first(), first);
+    EXPECT_EQ(pair.second(), second);
 }
 
-// Проверка копирующего конструктора
-TEST(TPairTest, CopyConstructor) {
-    TPair<int, std::string> p1(5, "World");
-    TPair<int, std::string> p2(p1);
-    ASSERT_EQ(p2.first, 5);
-    ASSERT_EQ(p2.second, "World");
+TEST(TPairTest, MoveConstructor) {
+    // Arrange
+    TPair<int, double> original(1, 2.5);
+
+    // Act
+    TPair<int, double> moved(std::move(original));
+
+    // Assert
+    EXPECT_EQ(moved.first(), 1);
+    EXPECT_EQ(moved.second(), 2.5);
 }
 
-// Проверка оператора присваивания
+// тесты операторов
 TEST(TPairTest, AssignmentOperator) {
-    TPair<int, std::string> p1(7, "Assign");
-    TPair<int, std::string> p2;
-    p2 = p1;
-    ASSERT_EQ(p2.first, 7);
-    ASSERT_EQ(p2.second, "Assign");
+    // Arrange
+    TPair<int, double> pair1(1, 2.5);
+    TPair<int, double> pair2;
+
+    // Act
+    pair2 = pair1;
+
+    // Assert
+    EXPECT_EQ(pair2.first(), 1);
+    EXPECT_EQ(pair2.second(), 2.5);
 }
 
-// Проверка функции swap
-TEST(TPairTest, SwapFunction) {
-    TPair<int, std::string> p1(8, "First");
-    TPair<int, std::string> p2(9, "Second");
-    p1.swap(p2);
-    ASSERT_EQ(p1.first, 9);
-    ASSERT_EQ(p1.second, "Second");
-    ASSERT_EQ(p2.first, 8);
-    ASSERT_EQ(p2.second, "First");
+TEST(TPairTest, MoveAssignmentOperator) {
+    // Arrange
+    TPair<int, double> pair1(1, 2.5);
+    TPair<int, double> pair2;
+
+    // Act
+    pair2 = std::move(pair1);
+
+    // Assert
+    EXPECT_EQ(pair2.first(), 1);
+    EXPECT_EQ(pair2.second(), 2.5);
 }
 
-// Проверка оператора равенства
 TEST(TPairTest, EqualityOperator) {
-    TPair<int, std::string> p1(1, "A");
-    TPair<int, std::string> p2(1, "A");
-    ASSERT_TRUE(p1 == p2);
+    // Arrange
+    TPair<int, double> pair1(1, 2.5);
+    TPair<int, double> pair2(1, 2.5);
+
+    // Act & Assert
+    EXPECT_TRUE(pair1 == pair2);
 }
 
-// Проверка оператора неравенства
 TEST(TPairTest, InequalityOperator) {
-    TPair<int, std::string> p1(1, "A");
-    TPair<int, std::string> p2(2, "B");
-    ASSERT_TRUE(p1 != p2);
+    // Arrange
+    TPair<int, double> pair1(1, 2.5);
+    TPair<int, double> pair2(2, 3.5);
+
+    // Act & Assert
+    EXPECT_TRUE(pair1 != pair2);
 }
 
-// Проверка оператора вывода
-TEST(TPairTest, OutputOperator) {
-    TPair<int, std::string> p(3, "Test");
+TEST(TPairTest, LessThanOperator) {
+    // Arrange
+    TPair<int, double> pair1(1, 2.5);
+    TPair<int, double> pair2(2, 3.5);
+
+    // Act & Assert
+    EXPECT_TRUE(pair1 < pair2);
+}
+
+// тесты арифметических операций
+TEST(TPairTest, AdditionOperator) {
+    // Arrange
+    TPair<int, double> pair1(1, 2.5);
+    TPair<int, double> pair2(3, 4.5);
+
+    // Act
+    TPair<int, double> result = pair1 + pair2;
+
+    // Assert
+    EXPECT_EQ(result.first(), 4);
+    EXPECT_EQ(result.second(), 7.0);
+}
+
+TEST(TPairTest, SubtractionOperator) {
+    // Arrange
+    TPair<int, double> pair1(5, 6.5);
+    TPair<int, double> pair2(3, 4.5);
+
+    // Act
+    TPair<int, double> result = pair1 - pair2;
+
+    // Assert
+    EXPECT_EQ(result.first(), 2);
+    EXPECT_EQ(result.second(), 2.0);
+}
+
+// тест метода to_string
+TEST(TPairTest, ToStringMethod) {
+    // Arrange
+    TPair<int, double> pair(1, 2.5);
+
+    // Act
+    std::string result = pair.to_string();
+
+    // Assert
+    EXPECT_EQ(result, "(1, 2.5)");
+}
+
+// тест оператора вывода в поток
+TEST(TPairTest, OutputStreamOperator) {
+    // Arrange
+    TPair<int, double> pair(1, 2.5);
     std::stringstream ss;
-    ss << p;
-    ASSERT_EQ(ss.str(), "(3, Test)");
-}
 
-// Проверка функции make_pair
-TEST(TPairTest, MakePairFunction) {
-    auto p = make_pair(42, std::string("Hello MakePair"));
-    ASSERT_EQ(p.first, 42);
-    ASSERT_EQ(p.second, "Hello MakePair");
+    // Act
+    ss << pair;
+
+    // Assert
+    EXPECT_EQ(ss.str(), "(1, 2.5)");
 }
