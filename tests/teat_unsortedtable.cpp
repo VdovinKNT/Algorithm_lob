@@ -107,3 +107,13 @@ TEST(TUnsortedTableTest, throw_when_key_not_found) {
     // Act & Assert
     ASSERT_THROW(table.find(999), std::out_of_range);
 }
+
+TEST(TUnsortedTableTest, throw_when_key_not_found_2) {
+    // Arrange
+    TUnsortedTable<int, std::string> table;
+    table.insert("sdhdbh");
+    table.erase(1);
+
+    // Act & Assert
+    ASSERT_THROW(table[1], std::out_of_range);
+}

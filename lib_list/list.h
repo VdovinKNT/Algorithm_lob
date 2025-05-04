@@ -1,4 +1,4 @@
-// Copyright 2024 Artem Vdovin
+// Copyright 2024 Artem Vdovin 
 
 #ifndef LIB_LIST_LIST_H_
 #define LIB_LIST_LIST_H_

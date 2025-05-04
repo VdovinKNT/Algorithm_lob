@@ -3,7 +3,7 @@
 #ifndef MERGE_SORTED_LISTS_H_
 #define MERGE_SORTED_LISTS_H_
 
-#include "../lib_List/List.h"
+#include "../lib_list/list.h"
 
 template <typename T>
 TList<T> mergeSortedLists(const TList<T>& list1, const TList<T>& list2) {

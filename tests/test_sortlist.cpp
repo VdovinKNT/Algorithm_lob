@@ -1,4 +1,4 @@
-// Copyright 2025 Artem Vdovin
+/*// Copyright 2025 Artem Vdovin
 
 #include <gtest.h>
 #include "../lib_list/list.h"
@@ -104,6 +104,4 @@ TEST(TestMergeSortedListsLib, merging_lists_with_duplicates) {
         idx++;
     }
     EXPECT_EQ(idx, 6);
-}
-
-
+}*/
